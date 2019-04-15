@@ -1,0 +1,311 @@
+
+body {
+	background: #eee;
+	box-shadow: inset 0 0 60em #777;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+
+.menu-area, .work-area {
+	position: absolute;
+	bottom: 0;
+	top: 0;
+}
+
+.menu-area {
+	background: #eee;
+	box-shadow: 2px 0 20px -10px #000;
+	left: 0;
+	width: 285px;
+}
+
+.work-area {
+	left: 285px;
+	right: 0;
+}
+
+.img-area {
+	margin: 3% auto 0 auto;
+	position: relative;
+	max-width: 90%;
+}
+
+.set-line {
+	margin: 25px 5px;
+}
+
+#someimg {
+	max-width: 100%;
+}
+#Canvas {
+	max-width: 100%;
+	max-height: 100%;
+	display: block;
+	margin: auto;
+}
+#pasl_behind_bottom {
+	position: relative;
+}
+.macro-text {
+	position: absolute;
+	width: 100%;
+	word-wrap: break-word;
+	text-align: center;
+	/*overflow: hidden;
+	font-variant-caps: unicase;*/
+}
+
+.macro-text:focus {
+	cursor: default;
+}
+#bottom-text, .pasl-touch-zone:last-child {
+	bottom: 0;
+}
+#top-text, .pasl-touch-zone:first-child {
+	top: 0;
+}
+
+.pasl-touch-zone {
+	width: 100%;
+	height: 20%;
+	position: absolute;
+	vertical-align: middle;
+}
+
+#rty_mmm {
+	position: fixed;
+	z-index: 9999;
+	height: 0;
+	width: 100%;
+	left: 0;
+	top: 0;
+}
+input[type="color"] {
+	border: 1px solid #bbb;
+	max-width: 30px;
+	padding: 0;
+}
+input[name="font_bold"] + span:after {
+	content: "bold";
+	font-weight: bold;
+}
+input[name="font_italic"] + span:after {
+	content: "italic";
+	font-style: italic;
+}
+.opts > * {
+	vertical-align: middle;
+	margin-left: inherit;
+	max-width: 110px;
+}
+
+.opts > .size-ruler {
+	max-width: 150px;
+}
+
+.sup-align {
+	vertical-align: super;
+	font-size: 14px;
+}
+
+/* === pasL elements style === */
+.pasl-col-sect {
+	height: 100%;
+	display: inline-block;
+	float: left;
+}
+.pasl-row-sect {
+	width: 100%;
+	display: block;
+}
+.pasl-dark {
+	background-color: rgba(33,33,33,.6);
+}
+.pasl-rcons {
+	background-color: white;
+	border: 1px solid black;
+	position: absolute;
+	opacity: 0.5;
+	height: 5px;
+	width: 5px;
+}
+.pasl-selection-area {
+	position: relative;
+	cursor: move;
+}
+#rcon_t-l {
+	top: -5px;
+	left: -5px;
+	cursor: nw-resize;
+}
+#rcon_t-r {
+	top: -5px;
+	right: -5px;
+	cursor: ne-resize;
+}
+#rcon_b-l {
+	bottom: -5px;
+	left: -5px;
+	cursor: sw-resize;
+}
+#rcon_b-r {
+	bottom: -5px;
+	right: -5px;
+	cursor: se-resize;
+} /* = = = = = = = = */
+
+
+/* === ruler elements style === */
+.size-ruler {
+	position: relative;
+	border: 1px solid #bbb;
+	border-bottom-color: #fff;
+	color: #a4a4a4;
+	font: 12px monospace;
+}
+.size-ruler:before {
+	content: attr(label) ":";
+	position: absolute;
+	left: 0;
+}
+.size-ruler:after {
+	content: attr(value) "px";
+	position: absolute;
+	right: 0;
+}
+
+.slider {
+	padding: 9px 4px;
+	position: absolute;
+	box-shadow: 1px 1px 0 #888;
+	top: -10px;
+	background-color: cornflowerblue;
+	z-index: 1;
+}
+
+.I {
+	margin-left: 18px;
+	line-height: 0;
+	position: relative;
+	border: 1px solid #bbb;
+	border-right-color: white;
+}
+.I:after, .I:first-child:before {
+	content: "";
+	position: absolute;
+	top: 3px;
+	left: 9px;
+	padding: 4px 0;
+	border: 1px solid #ccc;
+	border-left-width: 0;
+}
+.I:first-child:before {
+	left: -10px;
+} /* = = = = = = = = */
+
+
+#Demotivator {
+	display: inline-block;
+	border: 5px solid #444;
+	padding: 10px 15px;
+	border-bottom-width: 15px;
+}
+
+#Macro {
+	display: inline-block;
+	border: 1px dotted #444;
+	padding: 16px 18px;
+	position: relative;
+	text-align: center;
+	font-size: 10px;
+	color: #444;
+}
+
+#Macro:before, #Macro:after {
+	display: block;
+	position: absolute;
+	right: 0;
+	left: 0;
+}
+
+#Macro:before {
+	content: "simple";
+	top: 0;
+}
+
+#Macro:after {
+	content: "text";
+	bottom: 0;
+}
+
+#Free {
+	font-size: 20px;
+	background: #eee;
+}
+
+#Free:before {
+	content: "T";
+	border: 1px solid #aaa;
+	padding: 4px 12px;
+	background: linear-gradient(to bottom, #ddd, #fff);
+}
+
+#Free:hover:before {
+	background: linear-gradient(to bottom, #e5e5e5, #fff);
+}
+
+#Free:active:before {
+	background: #cecece;
+}
+
+.set-table {
+	width: 100%;
+	margin: 25px 0;
+}
+
+.set-table-col1 {
+	padding: 10px;
+	text-align: center;
+}
+
+.set-table-col2 {
+	padding: 10px 20px;
+	border: 0 dashed #444;
+	border-left-width: 1px;
+	text-align: center;
+}
+
+#addText {
+	padding: 0 8px;
+	margin-left: 18px;
+	font-family: Serif;
+	font-size: 20px;
+}
+
+.out-view {
+	background-color: black;
+	text-align: center;
+	position: relative;
+	width: 100%;
+	height: 168px;
+}
+.out-btn:before {
+	content: attr(id);
+	opacity: .5;
+	padding: 4px 10px;
+	position: absolute;
+	background-color: gray;
+	color: white;
+	bottom: 0;
+	right: 0;
+}
+#Save:before {
+	right: 57px;
+}
+.out-btn:hover:before {
+	opacity: .7;
+}
+.out-btn:active:before {
+	opacity: 1;
+}

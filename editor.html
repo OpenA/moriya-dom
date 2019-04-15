@@ -1,0 +1,72 @@
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Macaron fastWriter</title>
+		<link rel="stylesheet" type="text/css" href="editor_style.css" async>
+		<link rel="stylesheet" type="text/css" href="addition_fonts.css" async>
+		<script type="application/javascript" src="settings_loader.js"></script>
+	</head>
+	<body>
+		<div class="menu-area">
+			<form id="macros-settings-area" style="">
+				<div class="out-view">
+					<canvas id="Canvas"></canvas>
+					<span id="Save" class="out-btn"></span>
+					<span id="Draw" class="out-btn"></span>
+				</div>
+				<div class="set-line opts">
+					<select name="font_family">
+						<option style="font-family: Akademitscheskaya">Akademitscheskaya</option>
+						<option style="font-family: 'Beau Sans Pro'">Beau Sans Pro</option>
+						<option style="font-family: 'Gotham Narrow'">Gotham Narrow</option>
+						<option style="font-family: 'Agora Slab Pro'">Agora Slab Pro</option>
+						<option style="font-family: Gunplay">Gunplay</option>
+						<option style="font-family: Verdana">Verdana</option>
+						<option style="font-family: Ponter">Ponter</option>
+						<option style="font-family: Impact">Impact</option>
+						<option style="font-family: Tahoma">Tahoma</option>
+					</select>
+					<input type="color" name="font_color">
+					<input type="checkbox" name="font_bold"><span class="sup-align"></span>
+					<input type="checkbox" name="font_italic"><span class="sup-align"></span>
+				</div>
+				<div class="set-line size-ruler" value="0" label="font">
+					<span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span>
+					<span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span>
+					<span class="I"></span><span class="slider" style="left: 0;"></span>
+					<!-- input type="range" name="font_size_value" step="2" min="8" max="120" style="width: 99%;" -->
+				</div>
+				<div class="set-line opts">
+					<input type="color" name="stroke_color">
+					<div class="size-ruler" value="0" label="stroke" style="display: inline-block;">
+						<span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span>
+						<span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span>
+						<span class="slider" style="left: 0;"></span>
+					</div>
+				</div>
+				<table class="set-table">
+					<tbody>
+						<tr>
+							<td class="set-table-col1"><input type="radio" name="edit-mode" value="1"></td>
+							<td class="set-table-col2"><span id="Demotivator"></span></td>
+						</tr>
+						<tr>
+							<td class="set-table-col1"><input type="radio" name="edit-mode" value="2"></td>
+							<td class="set-table-col2"><span id="Macro"></span></td>
+						</tr>
+						<tr>
+							<td class="set-table-col1"><input type="radio" name="edit-mode" value="3"></td>
+							<td class="set-table-col2"><span id="Free"></span></td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+		<div class="work-area">
+			<div class="img-area">
+				<img id="someimg" src="exemple.jpg">
+			</div>
+		</div>
+		<script type="application/javascript" src="editor.js"></script>
+	</body>
+</html>

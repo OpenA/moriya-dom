@@ -63,13 +63,6 @@ body {
 	top: 0;
 }
 
-.pasl-touch-zone {
-	width: 100%;
-	height: 20%;
-	position: absolute;
-	vertical-align: middle;
-}
-
 #rty_mmm {
 	position: fixed;
 	z-index: 9999;
@@ -94,112 +87,12 @@ input[name="font_italic"] + span:after {
 .opts > * {
 	vertical-align: middle;
 	margin-left: inherit;
-	max-width: 110px;
-}
-
-.opts > .size-ruler {
-	max-width: 150px;
 }
 
 .sup-align {
 	vertical-align: super;
 	font-size: 14px;
 }
-
-/* === pasL elements style === */
-.pasl-col-sect {
-	height: 100%;
-	display: inline-block;
-	float: left;
-}
-.pasl-row-sect {
-	width: 100%;
-	display: block;
-}
-.pasl-dark {
-	background-color: rgba(33,33,33,.6);
-}
-.pasl-rcons {
-	background-color: white;
-	border: 1px solid black;
-	position: absolute;
-	opacity: 0.5;
-	height: 5px;
-	width: 5px;
-}
-.pasl-selection-area {
-	position: relative;
-	cursor: move;
-}
-#rcon_t-l {
-	top: -5px;
-	left: -5px;
-	cursor: nw-resize;
-}
-#rcon_t-r {
-	top: -5px;
-	right: -5px;
-	cursor: ne-resize;
-}
-#rcon_b-l {
-	bottom: -5px;
-	left: -5px;
-	cursor: sw-resize;
-}
-#rcon_b-r {
-	bottom: -5px;
-	right: -5px;
-	cursor: se-resize;
-} /* = = = = = = = = */
-
-
-/* === ruler elements style === */
-.size-ruler {
-	position: relative;
-	border: 1px solid #bbb;
-	border-bottom-color: #fff;
-	color: #a4a4a4;
-	font: 12px monospace;
-}
-.size-ruler:before {
-	content: attr(label) ":";
-	position: absolute;
-	left: 0;
-}
-.size-ruler:after {
-	content: attr(value) "px";
-	position: absolute;
-	right: 0;
-}
-
-.slider {
-	padding: 9px 4px;
-	position: absolute;
-	box-shadow: 1px 1px 0 #888;
-	top: -10px;
-	background-color: cornflowerblue;
-	z-index: 1;
-}
-
-.I {
-	margin-left: 18px;
-	line-height: 0;
-	position: relative;
-	border: 1px solid #bbb;
-	border-right-color: white;
-}
-.I:after, .I:first-child:before {
-	content: "";
-	position: absolute;
-	top: 3px;
-	left: 9px;
-	padding: 4px 0;
-	border: 1px solid #ccc;
-	border-left-width: 0;
-}
-.I:first-child:before {
-	left: -10px;
-} /* = = = = = = = = */
 
 
 #Demotivator {

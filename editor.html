@@ -3,15 +3,17 @@
 		<meta charset="utf-8">
 		<title>Kanako Text Input Example</title>
 		<link rel="stylesheet" type="text/css" href="css/kanako.css" async>
+		<link rel="stylesheet" type="text/css" href="css/sanae.css" async>
 		<link rel="stylesheet" type="text/css" href="editor_style.css" async>
 		<link rel="stylesheet" type="text/css" href="addition_fonts.css" async>
 		<script type="text/javascript" src="settings_loader.js"></script>
 		<script type="text/javascript" src="js/kanako-tools.js"></script>
 		<script type="text/javascript" src="js/kanako-class.js"></script>
+		<script type="text/javascript" src="js/sanae-ruler.js"></script>
 	</head>
 	<body>
 		<div class="menu-area">
-			<form id="macros-settings-area">
+			<div id="settings_panel">
 				<div class="out-view">
 					<canvas id="Canvas"></canvas>
 					<span id="Save" class="out-btn"></span>
@@ -31,23 +33,14 @@
 					</select>
 				</div>
 				<div class="set-line opts">
-					<input type="color" name="font_color">
 					<input type="checkbox" name="font_bold"><span class="sup-align"></span>
 					<input type="checkbox" name="font_italic"><span class="sup-align"></span>
 				</div>
-				<div class="set-line size-ruler" value="0" label="font">
-					<span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span>
-					<span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span>
-					<span class="I"></span><span class="slider" style="left: 0;"></span>
-					<!-- input type="range" name="font_size_value" step="2" min="8" max="120" style="width: 99%;" -->
+				<div id="set_font" class="set-line opts">
+					<input type="color" id="font_color">
 				</div>
-				<div class="set-line opts">
-					<input type="color" name="stroke_color">
-					<div class="size-ruler" value="0" label="stroke" style="display: inline-block;">
-						<span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span>
-						<span class="I"></span><span class="I"></span><span class="I"></span><span class="I"></span>
-						<span class="slider" style="left: 0;"></span>
-					</div>
+				<div id="set_stroke" class="set-line opts">
+					<input type="color" if="stroke_color">
 				</div>
 				<table class="set-table">
 					<tbody>
@@ -65,7 +58,7 @@
 						</tr>
 					</tbody>
 				</table>
-			</form>
+			</div>
 		</div>
 		<div class="work-area">
 			<div id="example-editor"></div>

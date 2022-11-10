@@ -3,9 +3,9 @@ const UIDragable = {
 
 	zIndex: 1,
 
-	DOWN: 'pointerdown',
-	MOVE: 'pointermove',
-	UP: 'pointerup',
+	DOWN: 'mousedown',
+	MOVE: 'mousemove',
+	UP: 'mouseup',
 
 	hasTouch: 'ontouchstart' in window,
 
@@ -69,16 +69,16 @@ const UIDragable = {
 		const isTouch = 'touches' in e;
 		const p = isTouch ? e.touches[0] : e;
 
-		if (isTouch && e.touches.length !== 1 || e.button !== 0)
+		if (isTouch && e.touches.length !== 1 || e.button > 0)
 			return null;
 		return { isTouch, pointX: p.clientX, pointY: p.clientY };
 	}
 }
 
-if (!('onpointerdown' in window)) {
-	UIDragable.DOWN = UIDragable.hasTouch ? 'touchstart' : 'mousedown';
-	UIDragable.MOVE = UIDragable.hasTouch ? 'touchmove' : 'mousemove';
-	UIDragable.UP   = UIDragable.hasTouch ? 'touchend' : 'mouseup';
+if (UIDragable.hasTouch) {
+	UIDragable.DOWN = 'touchstart';
+	UIDragable.MOVE = 'touchmove';
+	UIDragable.UP   = 'touchend';
 }
 
 class AnimFrameTracking {

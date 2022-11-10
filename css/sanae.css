@@ -1,0 +1,56 @@
+
+.sae-ruler, rl {
+	position: relative;
+	display: inline-block;
+	white-space: nowrap;
+}
+.sae-params {
+	position: absolute;
+	color: #a4a4a4;
+	font: 12px monospace;
+	left: 0; right: 0; top: 65%;
+}
+.sae-params:before {
+	content: attr(label) ':';
+	position: absolute;
+	left: 0;
+}
+.sae-value {
+	position: absolute;
+	right: 0;
+}
+.sae-value:after {
+	content: 'px';
+}
+.sae-slider {
+	padding: 9px 4px;
+	position: absolute;
+	box-shadow: 1px 1px 0 #888;
+	top: -1px;
+	background-color: cornflowerblue;
+}
+rhl, rl {
+	border: 1px solid #bbb;
+}
+rhl {
+	position: absolute;
+	left: 0; right: 0; top: 50%;
+	border-bottom-color: white;
+}
+rl {
+	margin-left: 18px;
+	height: 14px;
+	border-right-color: white;
+}
+rhl + rl:before, rl:after {
+	content: "";
+	position: absolute;
+	top: 3px;
+	left: 9px;
+	padding: 4px 0;
+	border: 1px solid #ccc;
+	border-left-width: 0;
+}
+rhl + rl:before {
+	left: -10px;
+}

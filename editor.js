@@ -1,30 +1,24 @@
 
-const SET_ELEM  = _setup(document.forms['macros-settings-area'], null, { click: onClickHandler, change: applyChanges }).elements;
-const RANGE_VAL = {
-	stroke: {
+const rulers = {
+	stroke: new SanaeRuler({
+		label: 'stroke',
+		width: 155,
 		max: 10,
+		step: 0.1,
 		min: .5
-	},
-	font: {
+	}),
+	font: new SanaeRuler({
+		label: 'font',
+		width: 175,
 		max: 180,
+		step: 1,
 		min:  10
-	}
+	})
 };
-
-for (let input of SET_ELEM) {
-	const param = _APPLICATION_[input.name];
-	if (input.type === 'checkbox') {
-		input.checked = input.name.includes(param);
-	} else
-		input.value = param;
-}
-
-for (let bar of document.getElementsByClassName('size-ruler')) {
-	const name = bar.getAttribute('label'),
-	      size = _APPLICATION_[`${name}_size`];
-	bar.addEventListener('mousedown', barChanger, false);
-	bar.lastElementChild.style.left = `${ size / RANGE_VAL[name].max * 100 }%`;
-	bar.setAttribute('value', size);
+for (const label in rulers ) {
+	let el = rulers[label].saeNodeRange;
+	 el.id = `${label}_size`;
+	document.getElementById('set_'+ label).append(el);
 }
 
 const kana = new KanakoInput();
@@ -32,6 +26,7 @@ const edit = document.getElementById('example-editor');
 
 edit.appendChild(kana.kaNakoInput).classList.add('ko-moko');
 
+const s_pannel  = document.getElementById('settings_panel');
 const textUnder = document.getElementById('under-text');
 const canvas    = document.getElementById('Canvas');
 
@@ -150,42 +145,6 @@ function applyChanges({ target: { name, value, checked, type } }) {
 		_APPLICATION_[name] = type === 'checkbox' ? checked : value;
 		_APPLICATION_.store();
 	}
-}
-
-function barChanger(e) {
-	if (e.button != 0)
-		return;
-	e.preventDefault();
-	
-	const parent = this, {
-	left,width } = this.getBoundingClientRect();
-	const slider = this.lastElementChild;
-	const name   = this.getAttribute('label');
-	
-	const {min, max} = RANGE_VAL[name];
-	const maxLeft = width - slider.clientWidth;
-	const barMove = ({ clientX }) => {
-		let x =  clientX - left - slider.clientWidth;
-		let s = Math.floor((clientX - left) / width * max * 10) / 10;
-		if (x < 0) {
-			x = 0;
-		} else if (x > maxLeft) {
-			x = maxLeft;
-			s = max;
-		}
-		slider.style.left = `${x}px`;
-		parent.setAttribute('value', (
-			_APPLICATION_[`${name}_size`] = Math.max(s, min)
-		));
-	}
-	const barEnd = () => {
-		_APPLICATION_.store();
-		window.removeEventListener('mousemove', barMove, false);
-		window.removeEventListener('mouseup', barEnd, false);
-	}
-	window.addEventListener('mousemove', barMove, false);
-	window.addEventListener('mouseup', barEnd, false);
-	barMove(e);
 }
 
 //var dElem = null;

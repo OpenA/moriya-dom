@@ -1,14 +1,17 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Macaron fastWriter</title>
+		<title>Kanako Text Input Example</title>
+		<link rel="stylesheet" type="text/css" href="css/kanako.css" async>
 		<link rel="stylesheet" type="text/css" href="editor_style.css" async>
 		<link rel="stylesheet" type="text/css" href="addition_fonts.css" async>
-		<script type="application/javascript" src="settings_loader.js"></script>
+		<script type="text/javascript" src="settings_loader.js"></script>
+		<script type="text/javascript" src="js/kanako-tools.js"></script>
+		<script type="text/javascript" src="js/kanako-class.js"></script>
 	</head>
 	<body>
 		<div class="menu-area">
-			<form id="macros-settings-area" style="">
+			<form id="macros-settings-area">
 				<div class="out-view">
 					<canvas id="Canvas"></canvas>
 					<span id="Save" class="out-btn"></span>
@@ -26,6 +29,8 @@
 						<option style="font-family: Impact">Impact</option>
 						<option style="font-family: Tahoma">Tahoma</option>
 					</select>
+				</div>
+				<div class="set-line opts">
 					<input type="color" name="font_color">
 					<input type="checkbox" name="font_bold"><span class="sup-align"></span>
 					<input type="checkbox" name="font_italic"><span class="sup-align"></span>
@@ -63,9 +68,7 @@
 			</form>
 		</div>
 		<div class="work-area">
-			<div class="img-area">
-				<img id="someimg" src="exemple.jpg">
-			</div>
+			<div id="example-editor"></div>
 		</div>
 		<script type="application/javascript" src="editor.js"></script>
 	</body>

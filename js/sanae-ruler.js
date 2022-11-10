@@ -32,7 +32,7 @@ class SanaeRuler {
 			set: f => (sae_value.textContent = Math.floor(f * 10) / 10)
 		};
 		Object.defineProperties(this, {
-			saeNodeRange: { value: sae_ruler, enumerable: true },
+			saeNodeRuler: { value: sae_ruler, enumerable: true },
 			value,
 			MIN  : { value: min, enumerable: true },
 			STEP : { value: step, enumerable: true },

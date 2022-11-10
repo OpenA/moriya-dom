@@ -61,7 +61,7 @@ class KanakoInput extends Range {
 			return tx_ctx.evaluate(el, type);
 		}
 		Object.defineProperties(this, {
-			kaNakoInput: { value: ka_nako, enumerable: true },
+			kaNodeInput: { value: ka_nako, enumerable: true },
 			kaTextArea : { value: ka_txtarea },
 			kaContainer: { value: ka_content },
 			kaTxtCursor: { value: ka_cursor },

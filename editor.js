@@ -16,7 +16,7 @@ const rulers = {
 	})
 };
 for (const label in rulers ) {
-	let el = rulers[label].saeNodeRange;
+	let el = rulers[label].saeNodeRuler;
 	 el.id = `${label}_size`;
 	document.getElementById('set_'+ label).append(el);
 }
@@ -24,7 +24,7 @@ for (const label in rulers ) {
 const kana = new KanakoInput();
 const edit = document.getElementById('example-editor');
 
-edit.appendChild(kana.kaNakoInput).classList.add('ko-moko');
+edit.appendChild(kana.kaNodeInput).classList.add('ko-moko');
 
 const s_pannel  = document.getElementById('settings_panel');
 const textUnder = document.getElementById('under-text');

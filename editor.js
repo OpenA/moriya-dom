@@ -2,21 +2,19 @@
 const rulers = {
 	stroke: new SanaeRuler({
 		label: 'stroke',
-		width: 155,
-		max: 10,
-		step: 0.1,
-		min: .5
+		min: .5, max: 10,
+		precision: 1,
+		width: 155
 	}),
 	font: new SanaeRuler({
 		label: 'font',
-		width: 175,
-		max: 180,
-		step: 1,
-		min:  10
+		min: 10, max: 180,
+		precision: 0,
+		width: 175
 	})
 };
 for (const label in rulers ) {
-	let el = rulers[label].saeNodeRuler;
+	let el = rulers[label];
 	 el.id = `${label}_size`;
 	document.getElementById('set_'+ label).append(el);
 }

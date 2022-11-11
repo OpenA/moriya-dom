@@ -1,48 +1,49 @@
 
-.sae-ruler, rl {
+sae-ruler, r-l {
 	position: relative;
 	display: inline-block;
 	white-space: nowrap;
 }
-.sae-params {
+sae-line {
 	position: absolute;
+	display: block;
 	color: #a4a4a4;
 	font: 12px monospace;
 	left: 0; right: 0; top: 65%;
 }
-.sae-params:before {
-	content: attr(label) ':';
+sae-line:before {
+	content: attr(data-label) ':';
 	position: absolute;
 	left: 0;
 }
-.sae-value {
+sae-value {
 	position: absolute;
 	right: 0;
 }
-.sae-value:after {
-	content: 'px';
+sae-value:after {
+	content: attr(data-type);
 }
-.sae-slider {
+sae-slider {
 	padding: 9px 4px;
 	position: absolute;
 	box-shadow: 1px 1px 0 #888;
 	top: -1px;
 	background-color: cornflowerblue;
 }
-rhl, rl {
+r-hl, r-l {
 	border: 1px solid #bbb;
 }
-rhl {
+r-hl {
 	position: absolute;
 	left: 0; right: 0; top: 50%;
 	border-bottom-color: white;
 }
-rl {
+r-l {
 	margin-left: 18px;
 	height: 14px;
 	border-right-color: white;
 }
-rhl + rl:before, rl:after {
+r-hl + r-l:before, r-l:after {
 	content: "";
 	position: absolute;
 	top: 3px;
@@ -51,6 +52,6 @@ rhl + rl:before, rl:after {
 	border: 1px solid #ccc;
 	border-left-width: 0;
 }
-rhl + rl:before {
+r-hl + r-l:before {
 	left: -10px;
 }

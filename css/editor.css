@@ -1,0 +1,52 @@
+/* font settings group */
+input[name="text_align"]:checked + label[for] {
+	outline: solid 1px #777;
+	background-color: blanchedalmond;
+}
+.fnt-inp-group input:not(:checked) + label[for] {
+	opacity: .3;
+	text-decoration: line-through;
+}
+label[for="style_bold"]:before {
+	content: 'Bold';
+	cursor: pointer;
+	font: bold 90% monospace;
+}
+label[for="style_italic"]:before {
+	content: 'Italic';
+	cursor: pointer;
+	font: italic 90% monospace;
+}
+label[for="font_family"] {
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+}
+#font_family {
+	border: none;
+	width: 100px;
+	background-color: transparent;
+	outline: none;
+}
+#font_family:not(:focus) {
+	text-overflow: ellipsis;
+}
+#font_family + .sae-list {
+	background-color: floralwhite;
+}
+.fnt-fam, #font_family {
+	font-size: 14px;
+	color: #807062;
+}
+.tex-ali-lines {
+	width: 12px;
+	height: 12px;
+	stroke: #6c6554;
+	margin-left: 4px;
+}
+.fnt-inp-group {
+	color: #807062;
+	border: 2px dashed #aaa;
+	padding: 0 5px;
+	background-color: floralwhite;
+}

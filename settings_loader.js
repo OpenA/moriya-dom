@@ -1,6 +1,6 @@
 
-window._APPLICATION_ = (() => {
-	
+const TextStyle = (() => {
+
 	const param = {
 		stroke_color: '#000000',
 		stroke_size: 2,
@@ -10,23 +10,22 @@ window._APPLICATION_ = (() => {
 		font_bold: 'bold',
 		font_size: 64
 	};
-	
-	const tx = {};
-	
+
+	const tx = Object.create(null);
+
 	for (let name in param) {
 		tx[name] = document.createTextNode( param[name] );
 	}
-	
+
 	var loadChanges = (err, data) => {
 		if (err)
 			throw err;
-	
 		for (let name in data  ) {
 			if ( name in param )
 			  tx[name].textContent = (param[name] = data[name]);
 		}
 	}
-	
+
 	if (typeof require !== 'undefined') {
 		let fs = require('fs');
 		var saveChanges = () => {

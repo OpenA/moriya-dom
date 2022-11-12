@@ -19,10 +19,29 @@ for (const label in rulers ) {
 	document.getElementById('set_'+ label).append(el);
 }
 
+const finp = document.getElementById('font_inputs').lastElementChild,
+      opts = new SuwakoOptions({
+	for_id: 'font_family', type: 2,
+	list: [
+		{ class: 'fnt-fam', style: "font-family: Arial", 'data-value': 'Arial' },
+		{ class: 'fnt-fam', style: "font-family: Impact", 'data-value': 'Impact' },
+		{ class: 'fnt-fam', style: "font-family: Tahoma", 'data-value': 'Tahoma' },
+		{ class: 'fnt-fam', style: "font-family: Verdana", 'data-value': 'Verdana' },
+		{ text: 'funcy fonts' },
+		{ class: 'fnt-fam', style: "font-family: 'Agora Slab Pro'", 'data-value': 'Agora Slab Pro' },
+		{ class: 'fnt-fam', style: "font-family: Akademitscheskaya", 'data-value': 'Akademitscheskaya' },
+		{ class: 'fnt-fam', style: "font-family: 'Beau Sans Pro'", 'data-value': 'Beau Sans Pro' },
+		{ class: 'fnt-fam', style: "font-family: 'Gotham Narrow'", 'data-value': 'Gotham Narrow' },
+		{ class: 'fnt-fam', style: "font-family: Gunplay", 'data-value': 'Gunplay' },
+		{ class: 'fnt-fam', style: "font-family: Ponter", 'data-value': 'Ponter' }
+	]
+});
+
 const kana = new KanakoInput();
 const edit = document.getElementById('example-editor');
 
 edit.appendChild(kana.kaNodeInput).classList.add('ko-moko');
+finp.append(opts);
 
 const s_pannel  = document.getElementById('settings_panel');
 const textUnder = document.getElementById('under-text');

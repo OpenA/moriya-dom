@@ -1,0 +1,63 @@
+/* sanae options style */
+.suw-list {
+	display: block;
+	margin: 0; padding: 0;
+	list-style: outside none none;
+	visibility: hidden;
+}
+.suw-item {
+	display: list-item;
+	padding: 5px 10px;
+}
+.suw-item:hover {
+	background-color: #ddd;
+}
+.suw-item[data-value]:empty:before {
+	content: attr(data-value);
+}
+.suw-hr {
+	background-color: #bbb;
+	padding: 0 1px;
+	color: #fff;
+	font: italic 10px serif;
+	text-align: center;
+}
+.suw-item, .suw-toggle, .suw-input {
+	color: #444;
+}
+.suw-list, .suw-toggle, .suw-input {
+	background-color: #fefefe;
+	border: 1px solid;
+	border-color: #f1f1f1 #c1c1c1 #c1c1c1 #f1f1f1;
+}
+.suw-input  {
+	width: 200px; cursor: text;
+	text-decoration-line: underline;
+}
+.suw-toggle, .suw-input {
+	display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	padding: 2px 4px;
+}
+.suw-input *, .suw-toggle * {
+	display: inline;
+	white-space: nowrap;
+}
+.suw-toggle:empty:before,
+.suw-input:empty:before {
+	content: attr(data-empty);
+	font-style: italic;
+	opacity: .5;
+}
+.suw-toggle[data-marker]:after {
+	content: attr(data-marker);
+	padding-left: 4px;
+}
+.suw-input[data-compl]:after {
+	content: attr(data-compl);
+	opacity: .5;
+}
+.suw-active > .suw-list, *:focus + .suw-list {
+	visibility: visible;
+}

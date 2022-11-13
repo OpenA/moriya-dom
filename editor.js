@@ -6,20 +6,20 @@ const rulers = {
 		precision: 1,
 		width: 155
 	}),
-	font: new SanaeRuler({
+	fill: new SanaeRuler({
 		label: 'font',
 		min: 10, max: 180,
 		precision: 0,
 		width: 175
 	})
 };
-for (const label in rulers ) {
-	let el = rulers[label];
-	 el.id = `${label}_size`;
-	document.getElementById('set_'+ label).append(el);
+for (const name in rulers ) {
+	let el = rulers[name];
+	 el.id = `${el.dataLabel}_size`;
+	document.getElementById(name +'_color').after(el);
 }
 
-const finp = document.getElementById('font_inputs').lastElementChild,
+const finp = document.querySelector('.fnt-inp-group'),
       opts = new SuwakoOptions({
 	for_id: 'font_family', type: 2,
 	list: [
@@ -38,7 +38,7 @@ const finp = document.getElementById('font_inputs').lastElementChild,
 });
 
 const kana = new KanakoInput();
-const edit = document.getElementById('example-editor');
+const edit = document.querySelector('.text-area');
 
 edit.appendChild(kana.kaNodeInput).classList.add('ko-moko');
 finp.append(opts);

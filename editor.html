@@ -6,7 +6,6 @@
 		<link rel="stylesheet" type="text/css" href="css/sanae.css" async>
 		<link rel="stylesheet" type="text/css" href="css/suwako.css" async>
 		<link rel="stylesheet" type="text/css" href="css/editor.css" async>
-		<link rel="stylesheet" type="text/css" href="editor_style.css" async>
 		<link rel="stylesheet" type="text/css" href="addition_fonts.css" async>
 		<script type="text/javascript" src="settings_loader.js"></script>
 		<script type="text/javascript" src="js/kanako-tools.js"></script>
@@ -16,47 +15,34 @@
 	</head>
 	<body>
 		<div class="menu-area">
+			<div class="out-preview">
+				<canvas id="canvas"></canvas>
+				<label id="out_nothing" class="out-btn">
+					<ul class="out-opts">
+						<li class="out-item">jpeg</li>
+						<li class="out-item">png</li>
+						<li class="out-item">webp</li>
+					</ul>
+				</label>
+			</div>
 			<div id="settings_panel">
-				<div class="out-view">
-					<canvas id="Canvas"></canvas>
-					<span id="Save" class="out-btn"></span>
-					<span id="Draw" class="out-btn"></span>
-				</div>
-				<div id="font_inputs" class="set-line">
+				<div class="set-line set-font">
 					<input id="text_align_left" type="radio" name="text_align" value="left" hidden>
 					<label for="text_align_left">
 						<svg class="tex-ali-lines" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-							<g fill="none">
-							  <path stroke-width="2" d="M0 1h40"/>
-							  <path stroke-width="2" d="M0 10h20"/>
-							  <path stroke-width="2" d="M0 20h30"/>
-							  <path stroke-width="2" d="M0 30h20"/>
-							  <path stroke-width="2" d="M0 39h40"/>
-							</g>
+							<path stroke-width="2" d="M0 1h40M0 10h20M0 20h30M0 30h20M0 39h40"/>
 						</svg>
 					</label>
 					<input id="text_align_center" type="radio" name="text_align" value="center" hidden>
 					<label for="text_align_center">
 						<svg class="tex-ali-lines" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-							<g fill="none">
-								<path stroke-width="2" d="M0 1h40"/>
-								<path stroke-width="2" d="M10 10h20"/>
-								<path stroke-width="2" d="M5 20h30"/>
-								<path stroke-width="2" d="M10 30h20"/>
-								<path stroke-width="2" d="M0 39h40"/>
-							</g>
+							<path stroke-width="2" d="M0 1h40M10 10h20M5 20h30M10 30h20M0 39h40"/>
 						</svg>
 					</label>
 					<input id="text_align_right" type="radio" name="text_align" value="right" hidden>
 					<label for="text_align_right">
 						<svg class="tex-ali-lines" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-							<g fill="none">
-								<path stroke-width="2" d="M0 1h40"/>
-								<path stroke-width="2" d="M20 10h20"/>
-								<path stroke-width="2" d="M10 20h30"/>
-								<path stroke-width="2" d="M20 30h20"/>
-								<path stroke-width="2" d="M0 39h40"/>
-							</g>
+							<path stroke-width="2" d="M0 1h40M20 10h20M10 20h30M20 30h20M0 39h40"/>
 						</svg>
 					</label>
 					<span class="fnt-inp-group">
@@ -66,32 +52,50 @@
 					<label for="style_italic"></label>
 					</span>
 				</div>
-				<div id="set_font" class="set-line opts">
-					<input type="color" id="font_color">
+				<div class="set-line set-fill">
+					<input type="color" id="fill_color">
 				</div>
-				<div id="set_stroke" class="set-line opts">
-					<input type="color" if="stroke_color">
+				<div class="set-line set-stroke">
+					<input type="color" id="stroke_color">
 				</div>
-				<table class="set-table">
-					<tbody>
-						<tr>
-							<td class="set-table-col1"><input type="radio" name="edit-mode" value="1"></td>
-							<td class="set-table-col2"><span id="Demotivator"></span></td>
-						</tr>
-						<tr>
-							<td class="set-table-col1"><input type="radio" name="edit-mode" value="2"></td>
-							<td class="set-table-col2"><span id="Macro"></span></td>
-						</tr>
-						<tr>
-							<td class="set-table-col1"><input type="radio" name="edit-mode" value="3"></td>
-							<td class="set-table-col2"><span id="Free"></span></td>
-						</tr>
-					</tbody>
+				<table class="set-mode">
+				<tbody>
+					<tr>
+						<td class="set-mode-col1"><input type="radio" name="mode_edit" value="0" id="mode_demo"></td>
+						<td class="set-mode-col2"><label for="mode_demo"></label></td>
+					</tr>
+					<tr>
+						<td class="set-mode-col1"><input type="radio" name="mode_edit" value="1" id="mode_macro"></td>
+						<td class="set-mode-col2"><label for="mode_macro"></label></td>
+					</tr>
+					<tr>
+						<td class="set-mode-col1"><input type="radio" name="mode_edit" value="2" id="mode_text"></td>
+						<td class="set-mode-col2"><label for="mode_text"></label></td>
+					</tr>
+				</tbody>
 				</table>
+				<input id="file_upload" type="file" hidden/>
 			</div>
 		</div>
 		<div class="work-area">
-			<div id="example-editor"></div>
+			<div class="drop-area">
+				<label for="file_upload"></label>
+				<code id="file_url" contenteditable="true"></code>
+			</div>
+			<div class="img-area">
+				<div id="work_layer">
+					<img id="work_img" src>
+				</div>
+			</div>
+			<div class="ctrl-area">
+				<div class="clear-img over-btn"></div>
+				<div class="scale-img over-btn">
+					<div id="scale_down"></div>
+					<div id="scale_val">100</div>
+					<div id="scale_up"></div>
+				</div>
+			</div>
+			<div class="text-area"></div>
 		</div>
 		<script type="application/javascript" src="editor.js"></script>
 	</body>

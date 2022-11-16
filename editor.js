@@ -1,63 +1,170 @@
 
-const rulers = {
-	stroke: new SanaeRuler({
+const wrk = {
+
+	scale: 0, scv: document.createTextNode('100'),
+
+	get img () {
+		const img = new Image; img.className = 'work-img';
+		const layer = document.getElementById('img_layer');
+		layer.appendChild(img).addEventListener('load', this);
+		Object.defineProperty(this, 'img', { value: img });
+		return img;
+	},
+	get kana () {
+		const kana = new KanakoInput;
+		kana.kaNodeInput.classList.add('ko-moko');
+		Object.defineProperty(this, 'kana', { value: kana.kaNodeInput });
+		return kana;
+	},
+	get macro () {
+		const value = _setup('div', { class: 'macro-cont' });
+		for(const id of ['top', 'bottom']) {
+			const el = _setup('code', { id: `${id}-text`, class: 'macro-text' }, {
+				blur: () => { el.contentEditable = false; },
+				dblclick: () => { el.contentEditable = true; }
+			});
+			value.append(el);
+		}
+		Object.defineProperty(this, 'macro', { value });
+		return value;
+	},
+
+	setImgSrc(src = '') {
+		let old = this.img.src; this.scv.textContent = '100';
+		this.img.style.width = this.img.style.height = '100%';
+		this.img.src = src; this.scale = 1;
+		return old;
+	},
+
+	reScaleImage(f = 1) {
+		this.scv.textContent = ((this.scale = f) * 100).toFixed(0);
+		this.img.style.width = `${this.img.naturalWidth * f}px`,
+		this.img.style.height = `${this.img.naturalHeight * f}px`;
+	},
+
+	handleEvent({ target: el }) {
+
+		const { scale } = this;
+
+		let val = 1, msg = 'scale-change';
+		switch (el.classList[0]) {
+		case 'work-img':
+			msg = 'img-change';
+			val = el.width / el.naturalWidth;
+			break;
+		case 'scale-up':
+			val = scale + .05,
+			val = val >= 5 ? scale : scale >= 1.5 ? val + .05 : val;
+			break;
+		case 'scale-down':
+			val = scale - .05,
+			val = val <= 0 ? .05 : scale > 1.5 ? val - .05 : val;
+			break;
+		}
+		this.reScaleImage(val);
+		window.postMessage({ msg, val }, '*');
+	}
+};
+
+const s_pannel = document.getElementById('settings_panel'),
+      fi_group = s_pannel.querySelector('.fnt-inp-group');
+
+/* inputs collection like form.elements */
+const inputs = {
+	style_italic : fi_group.children.style_italic,
+	style_bold   : fi_group.children.style_bold,
+	fill_color   : document.getElementById('fill_color'),
+	stroke_color : document.getElementById('stroke_color'),
+	stroke_size  : new SanaeRuler({
+		id: 'stroke_size',
 		label: 'stroke',
 		min: .5, max: 10,
 		precision: 1,
 		width: 155
 	}),
-	fill: new SanaeRuler({
+	font_size: new SanaeRuler({
+		id: 'font_size',
 		label: 'font',
 		min: 10, max: 180,
 		precision: 0,
 		width: 175
-	})
+	}),
+	font_family: new SuwakoOptions({
+		for_id: 'font_family', type: 2,
+		list: [
+			{ class: 'fnt-fam', style: 'font-family: Arial', 'data-value': 'Arial' },
+			{ class: 'fnt-fam', style: 'font-family: Impact', 'data-value': 'Impact' },
+			{ class: 'fnt-fam', style: 'font-family: Tahoma', 'data-value': 'Tahoma' },
+			{ class: 'fnt-fam', style: 'font-family: Verdana', 'data-value': 'Verdana' },
+			{ text: 'funcy fonts' },
+			{ class: 'fnt-fam', style: 'font-family: "Agora Slab Pro"', 'data-value': 'Agora Slab Pro' },
+			{ class: 'fnt-fam', style: 'font-family: Akademitscheskaya', 'data-value': 'Akademitscheskaya' },
+			{ class: 'fnt-fam', style: 'font-family: "Beau Sans Pro"', 'data-value': 'Beau Sans Pro' },
+			{ class: 'fnt-fam', style: 'font-family: "Gotham Narrow"', 'data-value': 'Gotham Narrow' },
+			{ class: 'fnt-fam', style: 'font-family: Gunplay', 'data-value': 'Gunplay' },
+			{ class: 'fnt-fam', style: 'font-family: Ponter', 'data-value': 'Ponter' }
+		]
+	}),
+	get text_align() {
+		const {
+			text_align_left: left, text_align_center: center,
+			text_align_right: right
+		} = fi_group.parentNode.children;
+		return center.checked ? center : right.checked ? right : left
+	}
 };
-for (const name in rulers ) {
-	let el = rulers[name];
-	 el.id = `${el.dataLabel}_size`;
-	document.getElementById(name +'_color').after(el);
-}
+/* add custom inputs */
+inputs.fill_color.after(inputs.font_size);
+inputs.stroke_color.after(inputs.stroke_size);
+fi_group.append(inputs.font_family);
 
-const finp = document.querySelector('.fnt-inp-group'),
-      opts = new SuwakoOptions({
-	for_id: 'font_family', type: 2,
-	list: [
-		{ class: 'fnt-fam', style: "font-family: Arial", 'data-value': 'Arial' },
-		{ class: 'fnt-fam', style: "font-family: Impact", 'data-value': 'Impact' },
-		{ class: 'fnt-fam', style: "font-family: Tahoma", 'data-value': 'Tahoma' },
-		{ class: 'fnt-fam', style: "font-family: Verdana", 'data-value': 'Verdana' },
-		{ text: 'funcy fonts' },
-		{ class: 'fnt-fam', style: "font-family: 'Agora Slab Pro'", 'data-value': 'Agora Slab Pro' },
-		{ class: 'fnt-fam', style: "font-family: Akademitscheskaya", 'data-value': 'Akademitscheskaya' },
-		{ class: 'fnt-fam', style: "font-family: 'Beau Sans Pro'", 'data-value': 'Beau Sans Pro' },
-		{ class: 'fnt-fam', style: "font-family: 'Gotham Narrow'", 'data-value': 'Gotham Narrow' },
-		{ class: 'fnt-fam', style: "font-family: Gunplay", 'data-value': 'Gunplay' },
-		{ class: 'fnt-fam', style: "font-family: Ponter", 'data-value': 'Ponter' }
-	]
+const canvas   = document.getElementById('canvas');
+const wrk_area = document.body.querySelector('.work-area'),
+      img_area = wrk_area.querySelector('.img-area'),
+      out_btn  = canvas.nextElementSibling; 
+
+/* add handlers */
+img_area.children[2].children[1].append(wrk.scv); // scale-val
+img_area.children[1].addEventListener('click', onClickHandler);
+img_area.children[2].addEventListener('click', wrk);
+
+s_pannel.addEventListener('change', onChangeHandler);
+out_btn.addEventListener('click', onClickHandler);
+window.addEventListener('message', ({ data }) => {
+	if (data && data.msg === 'img-change')
+		out_btn.className = 'out-apply';
 });
 
-const kana = new KanakoInput();
-const edit = document.querySelector('.text-area');
+const clearContext = () => {
+	const ctx = canvas.getContext('2d');
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
 
-edit.appendChild(kana.kaNodeInput).classList.add('ko-moko');
-finp.append(opts);
+const drawImage = (img, x = 0, y = 0, w = 0, h = 0) => {
+	canvas.width  = w || (w = img.width);
+	canvas.height = h || (h = img.height);
+	const ctx = canvas.getContext('2d');
+	ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
+	return ctx;
+}
 
-const s_pannel  = document.getElementById('settings_panel');
-const textUnder = document.getElementById('under-text');
-const canvas    = document.getElementById('Canvas');
+const getInputValues = () => {
+	const values = Object.create(null);
+	for (const key in inputs)
+		values[key] = inputs[key].value;
+	return values;
+}
 
-function drawDemotivator() {
-	let [X, Y, W, H] = pasL.getCoords();
+function drawDemo(img, txt, x = 0, y = 0, w = 0, h = 0) {
+
+	let dx = Math.floor(w / 8), dy = dx + h / 2;
 	
-	let dx = Math.floor(W / 8), dy = dx + H / 2;
+	canvas.width = (w + dx * 2), canvas.height = h + dy;
 	
-	canvas.width = (W + dx * 2), canvas.height = H + dy;
+	const ctx = canvas.getContext('2d');
 	
-	const contxt = canvas.getContext('2d');
-	
-	contxt.fillRect(0, 0, canvas.width, canvas.height);
-	contxt.drawImage(image, X, Y, W, H, dx, dx, W, H);
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	ctx.drawImage(img, x, y, w, h, dx, dx, w, h);
 	
 	const { stroke_size, stroke_color, font_italic, font_bold, font_size, font_family, font_color } = _APPLICATION_;
 	contxt.font        = `${font_italic} ${font_bold} ${font_size}px "${font_family}"`;
@@ -98,69 +205,48 @@ function drawMacro() {
 	contxt.strokeText(textBottom, X, H - stroke_size, W);
 }
 
-function onClickHandler({ target }) {
-	switch (target.id) {
-		case 'Draw':
-			try {
-				canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-			} finally {
-				drawMacro();
-			}
-			break;
-		case 'Save':
-			break;
-		case 'Free':
-			break;
+function onClickHandler({ target: el }) {
+
+	let val = '';
+
+	switch(el.classList[0]) {
+	case 'clear-img':
+		img_area.classList.remove('active');
+		val = wrk.setImgSrc();
+		break;
+	case 'out-apply':
+		clearContext();
+		drawImage(wrk.img);
+		el.className = 'out-save';
+		break;
+	case 'out-item':
+		let type = el.innerText;
+		el = out_btn, val = out_btn.lastElementChild.href;
+		canvas.toBlob(blob => {
+			out_btn.lastElementChild.href = URL.createObjectURL(blob);
+			out_btn.lastElementChild.download = 'canvas.'+ (type === 'jpeg' ? 'jpg' : type);
+			out_btn.lastElementChild.click();
+		}, `image/${type}`);
+	case 'out-save':
+		el.classList.toggle('active');
+		break;
 	}
+	if (/^blob\:/.test(val))
+		URL.revokeObjectURL(val);
 }
 
-function triggerButton({ target }) {
-	switch (target.name) {
-		case 'font_size_value':
-			break;
-		case 'font_family':
-			break;
-		case 'add_text':
-			document.querySelector('.work-area').appendChild(
-				_setup('code', { id: 'top-text', class: 'macro-text', contenteditable: false, draggable: true, style: "border: 1px dotted #ccc;background-color: rgba(255,255,255,.3);" }, {
-					focus: ({ target }) => {
-						target.onmousedown = moveTXT;
-					},
-					blur: ({ target }) => {
-						console.log(target)
-						target.contentEditable = false;
-						target.onmousedown = moveTXT;
-					},
-					dblclick: ({ target }) => {
-						target.contentEditable = true;
-						target.onmousedown = null;
-					}
-				})
-			);
-			break;
-	}
-}
-function moveTXT(e) {
-	e.preventDefault();
-	console.log(e)
-	const { left, top } = this.getBoundingClientRect();
-	let shiftX = e.clientX - (left + pageXOffset);
-	let shiftY = e.clientY - ( top + pageYOffset);
-	
-	const events = {
-		mouseup   : ( ) => _setup(window, null, { remove: events }),
-		mousemove : (o) => {
-			e.target.style.left = (o.clientX - shiftX) +'px';
-			e.target.style.top  = (o.clientY - shiftY) +'px';
-		}
-	}
-	_setup(window, null, events);
-}
+function onChangeHandler({ target }) {
+	let [ key, func, val ] = target.id.split('_');
 
-function applyChanges({ target: { name, value, checked, type } }) {
-	if (name in _APPLICATION_) {
-		_APPLICATION_[name] = type === 'checkbox' ? checked : value;
-		_APPLICATION_.store();
+	switch(key) {
+	case 'file':
+		val = URL.createObjectURL(target.files[0]);
+		img_area.classList.add('active');
+		wrk.setImgSrc( val );
+		break;
+	case 'mode':
+		wrk_area.className = `work-area mode-${func}`;
+		if (func === 'kana') {} else { wrk.img.before(wrk.macro) }
 	}
 }
 

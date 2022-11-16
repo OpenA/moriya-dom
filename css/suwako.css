@@ -1,4 +1,8 @@
 /* sanae options style */
+.suw-opts {
+	position: relative;
+	display: inline-block;
+}
 .suw-list {
 	display: block;
 	margin: 0; padding: 0;
@@ -43,6 +47,9 @@
 .suw-input *, .suw-toggle * {
 	display: inline;
 	white-space: nowrap;
+}
+.suw-input br {
+	display: none;
 }
 .suw-toggle:empty:before,
 .suw-input:empty:before {

@@ -1,28 +1,25 @@
 /** Custom element like `<input type="range">` */
 class SanaeRuler extends HTMLElement {
 
-	constructor({
+	constructor({ id = '',
 		label = 'size', width = 150, min = 0,
 		type  = 'px', precision = 0, max = 100,
 	}) {
-	super();
-
+		const sae_ruler  =  super(); if (id) sae_ruler.id = id;
 		const sae_line   = _setup('sae-line', { 'data-label': label });
 		const sae_value  = _setup('sae-value', { 'data-type': type, spellcheck: false, contentEditable: true });
 		const sae_slider = _setup('sae-slider', { style: 'left: 0;' });
 
 		let rls = [document.createElement('r-hl')],
-		    pcn = 10 * precision, _t = -1;
+		    len = Math.round(width / 22), _t = -1;
 
-		for(let i = 0, len = Math.round(width / 22); i < len; i++)
+		for(let i = 0; i < len; i++)
 			rls.push(document.createElement('r-l'));
-
 		rls.push(sae_line, sae_slider);
 
-		super.append(...rls);
-		super.style.width = `${width}px`;
-		super.addEventListener(UIDragable.DOWN, this);
-
+		sae_ruler.append(...rls);
+		sae_ruler.style.width = `${width}px`;
+		sae_ruler.addEventListener(UIDragable.DOWN, this);
 		sae_line.append(sae_value);
 		sae_value.addEventListener('input', e => {
 			/*...*/ clearTimeout(_t);
@@ -39,21 +36,21 @@ class SanaeRuler extends HTMLElement {
 		Object.defineProperties(this, {
 			min: { value: min, enumerable: true, writable: true },
 			max: { value: max, enumerable: true, writable: true },
-			value: pcn ? setFpVal : setIntVal,
+			value: precision ? setFpVal : setIntVal,
 			precision: {
 				get: () => precision, enumerable: true,
 				set: n => {
-					pcn = 10 * (precision = n);
-					Object.defineProperty(this, 'value', n ? setFpVal : setIntVal);
+					let setVal = (precision = n) ? setFpVal : setIntVal;
+					Object.defineProperty(this, 'value', setVal);
 				}
 			},
 			dataLabel: {
 				get: () => label, enumerable: true,
-				set: s => { sae_line.setAttribute('data-label', s) }
+				set: l => { sae_line.setAttribute('data-label', (label = l)) }
 			},
 			dataType: {
 				get: () => type, enumerable: true,
-				set: s => { sae_value.setAttribute('data-type', s) }
+				set: t => { sae_value.setAttribute('data-type', (type = t)) }
 			}
 		});
 	}
@@ -80,7 +77,7 @@ class SanaeRuler extends HTMLElement {
 			} else {
 				x = maxLeft * ((v - min) / (max - min));
 			}
-			slider.style.left = `${x}px`, this.value = v;
+			this.value = v, slider.style.left = `${x}px`;
 			this.dispatchEvent(new InputEvent('change', { bubbles: true }));
 			return;
 		}
@@ -95,7 +92,7 @@ class SanaeRuler extends HTMLElement {
 			} else {
 				v = (o.pointX - left) / width * max;
 			}
-			slider.style.left = `${x}px`, this.value = v;
+			this.value = v, slider.style.left = `${x}px`;
 			this.dispatchEvent(new InputEvent('change', { bubbles: true }));
 		}
 		e.preventDefault();

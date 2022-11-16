@@ -9,11 +9,10 @@ class SuwakoOptions extends HTMLLabelElement {
 		type = 1,
 		list = []
 	}) {
-	super();
-
 		const editable = type === 2;
-		const sae_area = _setup('div', { class: `suw-${editable ? 'input' : 'toggle'}`, 'data-empty': place_text, contentEditable: editable, spellcheck: false, autocomplete: 'off' });
-		const sae_list = _setup('ul', { class: 'suw-list', style: 'position: absolute; z-index: 1;' });
+		const suw_opts =  super(); suw_opts.className = 'suw-opts';
+		const suw_area = _setup('div', { class: `suw-${editable ? 'input' : 'toggle'}`, 'data-empty': place_text, contentEditable: editable, spellcheck: false, autocomplete: 'off' });
+		const suw_list = _setup('ul', { class: 'suw-list', style: 'position: absolute; z-index: 1;' });
 
 		let options = [], index = -1;
 
@@ -21,22 +20,22 @@ class SuwakoOptions extends HTMLLabelElement {
 			let { 'data-value': val, 'class': cl } = attrs;
 			if ( !val ) {
 				attrs.class = 'suw-hr'+ (cl ? ' '+ cl : '');
-				sae_list.append(_setup('div', attrs))
+				suw_list.append(_setup('div', attrs))
 			} else if (!options.includes(val)) {
 				options.push(val);
 				attrs.class = 'suw-item'+ (cl ? ' '+ cl : '');
-				sae_list.append(_setup('li', attrs));
+				suw_list.append(_setup('li', attrs));
 			}
 		}
 		if (for_id)
-			sae_area.id = super.htmlFor = for_id;
+			suw_area.id = suw_opts.htmlFor = for_id;
 		if (editable) {
-			this.bindInteractive(sae_area);
+			this.bindInteractive(suw_area);
 		} else if (marker) {
-			sae_area.setAttribute('data-marker', marker);
+			suw_area.setAttribute('data-marker', marker);
 		}
-		super.addEventListener(UIDragable.DOWN, this);
-		super.append(sae_area, sae_list);
+		suw_opts.addEventListener(UIDragable.DOWN, this);
+		suw_opts.append(suw_area, suw_list);
 
 		Object.defineProperties(this, {
 			options: { enumerable: true, value: options },
@@ -44,8 +43,8 @@ class SuwakoOptions extends HTMLLabelElement {
 				get: () => index, set: i => (this.value = options[i])
 			},
 			value: { enumerable: true,
-				get: () => sae_area.innerText,
-				set: s => (sae_area.textContent = (index = options.indexOf(s)) === -1 ? '' : s)
+				get: () => suw_area.innerText,
+				set: s => (suw_area.textContent = (index = options.indexOf(s)) === -1 ? '' : s)
 			}
 		});
 	}

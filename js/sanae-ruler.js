@@ -7,7 +7,7 @@ class SanaeRuler extends HTMLElement {
 	}) {
 		const sae_ruler  =  super(); if (id) sae_ruler.id = id;
 		const sae_line   = _setup('sae-line', { 'data-label': label });
-		const sae_value  = _setup('sae-value', { 'data-type': type, spellcheck: false, contentEditable: true });
+		const sae_value  = _setup('sae-value', { 'data-type': type, text: String(min), spellcheck: false, contentEditable: true });
 		const sae_slider = _setup('sae-slider', { style: 'left: 0;' });
 
 		let rls = [document.createElement('r-hl')],

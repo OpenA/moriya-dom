@@ -1,7 +1,7 @@
 
 const wrk = {
 
-	scale: 0, scv: document.createTextNode('100'),
+	scale: 0, scv: document.createTextNode('100'), mode: '',
 
 	get img () {
 		const img = new Image; img.className = 'work-img';
@@ -17,16 +17,94 @@ const wrk = {
 		return kana;
 	},
 	get macro () {
-		const value = _setup('div', { class: 'macro-cont' });
-		for(const id of ['top', 'bottom']) {
-			const el = _setup('code', { id: `${id}-text`, class: 'macro-text' }, {
-				blur: () => { el.contentEditable = false; },
-				dblclick: () => { el.contentEditable = true; }
-			});
-			value.append(el);
+		const value = _setup('div', { class: 'macro-cont', style: getSettingsStyle() });
+		for(const id of ['top', 'center', 'bottom']) {
+			value.appendChild(
+				_setup('div', { id: `mxt_${id}`, class: 'macro-text', contentEditable: true })
+			);
 		}
 		Object.defineProperty(this, 'macro', { value });
 		return value;
+	},
+
+	draw_demo() {
+		const iw = this.img.naturalWidth, maxS = 750,
+		      ih = this.img.naturalHeight, isVert = iw < ih;
+		let maxW = 0, txtY = 0, x = 40, w = iw,
+		    maxH = 0, txtH = 0, y = 40, h = ih;
+
+		if (isVert) {
+			if (maxS < ih) h = maxS, w *= maxS / ih;
+			maxW = w + 160, x = 80;
+		} else {
+			if (maxS < iw) w = maxS, h *= maxS / iw;
+			maxW = w + 80;
+		}
+		maxH = txtY = h + 80;
+
+		let ctx = drawLayers(canvas, maxW, maxH, [
+			{ x: 0, y: 0, w: maxW, h: maxH, fill: '#000' },
+		]);
+		const txtBot = this.macro.children.mxt_bottom.innerText;
+		const txtTop = this.macro.children.mxt_top.innerText;
+		const txtP   = {
+			hAlign  : 'center', maxW, maxH,
+			fStyle  : inputs.font_style.checked ? inputs.font_style.value : '',
+			fWeight : inputs.font_weight.checked ? inputs.font_weight.value : ''
+		};
+		txtP.fSize = 54, txtP.posY = txtH, txtH += drawText(ctx, txtTop, txtP).height + 10,
+		txtP.fSize = 27, txtP.posY = txtH, txtH += drawText(ctx, txtBot, txtP).height + 30;
+		const data = ctx.getImageData(0, 0, maxW, txtH);
+
+		maxH += maxH < txtH ? maxH : txtH;
+		ctx = drawLayers(canvas, maxW, maxH, [
+			{ x: 0, y: 0, w: maxW, h: maxH, fill: '#000' },
+			{ x: x - 5, y: y - 5, w: w + 10, h: h + 10, r: 4, fill: '#fff' },
+			{ x, y, w, h, r: [0, 0, iw, ih], fill: this.img }
+		]);
+		ctx.lineWidth = 3;
+		ctx.strokeStyle = '#000';
+		ctx.rect(x, y, w, h);
+		ctx.stroke();
+		ctx.putImageData(data, 0, txtY);
+	},
+
+	draw_macro() {
+		const iw = this.img.naturalWidth,
+		      ih = this.img.naturalHeight;
+		let maxW = (canvas.width  = iw);
+		let maxH = (canvas.height = ih);
+
+		const ctx = canvas.getContext('2d');
+		ctx.clearRect(0, 0, maxW, maxH);
+		ctx.drawImage(this.img, 0, 0, iw, ih, 0, 0, maxW, maxH);
+
+		const txtBottom  = this.macro.children.mxt_bottom.innerText;
+		const txtTop     = this.macro.children.mxt_top.innerText;
+		const lineHeight = this.macro.children.mxt_center.offsetHeight;
+		const params = { maxW, maxH, lineHeight,
+			hAlign  : inputs.text_align.value,
+			fSize   : inputs.font_size.value / this.scale,
+			fFamily : inputs.font_family.value || 'serif',
+			sColor  : inputs.stroke_color.value,
+			sWidth  : inputs.stroke_width.value,
+			fColor  : inputs.fill_color.value
+		};
+		if (inputs.font_style.checked)
+			params.fStyle = inputs.font_style.value;
+		if (inputs.font_weight.checked)
+			params.fWeight = inputs.font_weight.value;
+
+		params.vAlign = 'top', drawText(ctx, txtTop, params);
+		params.vAlign = 'bottom', drawText(ctx, txtBottom, params);
+	},
+
+	setSettings(key, param, val, apply) {
+		if (key !== 'fill')
+			param = `${key === 'stroke' ? '-webkit-text-stroke' : key}-${param}`;
+		if (Number.isFinite(val))
+			val = `${val}px`;
+		this.macro.style[param] = apply ? val : null;
 	},
 
 	setImgSrc(src = '') {
@@ -71,12 +149,12 @@ const s_pannel = document.getElementById('settings_panel'),
 
 /* inputs collection like form.elements */
 const inputs = {
-	style_italic : fi_group.children.style_italic,
-	style_bold   : fi_group.children.style_bold,
+	font_style   : fi_group.children.font_style_italic,
+	font_weight  : fi_group.children.font_weight_bold,
 	fill_color   : document.getElementById('fill_color'),
 	stroke_color : document.getElementById('stroke_color'),
-	stroke_size  : new SanaeRuler({
-		id: 'stroke_size',
+	stroke_width : new SanaeRuler({
+		id: 'stroke_width',
 		label: 'stroke',
 		min: .5, max: 10,
 		precision: 1,
@@ -90,7 +168,7 @@ const inputs = {
 		width: 175
 	}),
 	font_family: new SuwakoOptions({
-		for_id: 'font_family', type: 2,
+		for_id: 'font_family', type: 2, place_text: 'Default',
 		list: [
 			{ class: 'fnt-fam', style: 'font-family: Arial', 'data-value': 'Arial' },
 			{ class: 'fnt-fam', style: 'font-family: Impact', 'data-value': 'Impact' },
@@ -115,13 +193,13 @@ const inputs = {
 };
 /* add custom inputs */
 inputs.fill_color.after(inputs.font_size);
-inputs.stroke_color.after(inputs.stroke_size);
+inputs.stroke_color.after(inputs.stroke_width);
 fi_group.append(inputs.font_family);
 
 const canvas   = document.getElementById('canvas');
 const wrk_area = document.body.querySelector('.work-area'),
       img_area = wrk_area.querySelector('.img-area'),
-      out_btn  = canvas.nextElementSibling; 
+      out_btn  = canvas.nextElementSibling;
 
 /* add handlers */
 img_area.children[2].children[1].append(wrk.scv); // scale-val
@@ -135,17 +213,19 @@ window.addEventListener('message', ({ data }) => {
 		out_btn.className = 'out-apply';
 });
 
-const clearContext = () => {
-	const ctx = canvas.getContext('2d');
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-const drawImage = (img, x = 0, y = 0, w = 0, h = 0) => {
-	canvas.width  = w || (w = img.width);
-	canvas.height = h || (h = img.height);
-	const ctx = canvas.getContext('2d');
-	ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
-	return ctx;
+const getSettingsStyle = () => {
+	const keys = Object.keys(inputs), style = [];
+	for(let key of keys) {
+		let { value, checked } = inputs[key];
+		if (checked === false)
+			continue;
+		key = String.prototype.replace.apply(key,
+			key.startsWith('stroke') ? [/^stroke_(\w+)$/, '-webkit-text-stroke-$1'] : 
+			key.startsWith('fill') ? ['fill_', ''] : ['_', '-']
+		);
+		style.push(`${key}: ${value}${Number.isFinite(value) ? 'px' : ''};`);
+	}
+	return style.join(' ');
 }
 
 const getInputValues = () => {
@@ -153,56 +233,6 @@ const getInputValues = () => {
 	for (const key in inputs)
 		values[key] = inputs[key].value;
 	return values;
-}
-
-function drawDemo(img, txt, x = 0, y = 0, w = 0, h = 0) {
-
-	let dx = Math.floor(w / 8), dy = dx + h / 2;
-	
-	canvas.width = (w + dx * 2), canvas.height = h + dy;
-	
-	const ctx = canvas.getContext('2d');
-	
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-	ctx.drawImage(img, x, y, w, h, dx, dx, w, h);
-	
-	const { stroke_size, stroke_color, font_italic, font_bold, font_size, font_family, font_color } = _APPLICATION_;
-	contxt.font        = `${font_italic} ${font_bold} ${font_size}px "${font_family}"`;
-	contxt.lineWidth   = stroke_size;
-	contxt.strokeStyle = stroke_color;
-	contxt.fillStyle   = font_color;
-	contxt.textAlign   = 'center';
-	
-	const textUnder = document.getElementById('under-text').textContent;
-	contxt.textBaseline = "bottom";
-	contxt.fillText(textUnder, canvas.width/2, H + dy, canvas.width - dx);
-	contxt.strokeText(textUnder, canvas.width/2, H + dy, canvas.width - dx);
-}
-
-function drawMacro() {
-	let [X, Y, W, H] = pasL.getCoords();
-	canvas.width = W, canvas.height = H;
-	const contxt = canvas.getContext('2d');
-	contxt.drawImage(image, X, Y, W, H, 0, 0, W, H);
-	
-	const { stroke_size, stroke_color, font_italic, font_bold, font_size, font_family, font_color } = _APPLICATION_;
-	contxt.font        = `${font_italic} ${font_bold} ${font_size}px "${font_family}"`;
-	contxt.lineWidth   = stroke_size;
-	contxt.strokeStyle = stroke_color;
-	contxt.fillStyle   = font_color;
-	contxt.textAlign   = 'center';
-	
-	const textBottom = document.getElementById('bottom-text').textContent;
-	const textTop    = document.getElementById('top-text').textContent;
-	
-	X = W / 2, Y = Math.floor(font_size / 10);
-	
-	contxt.textBaseline = 'top';
-	contxt.fillText(textTop, X, Y, W);
-	contxt.strokeText(textTop, X, Y, W);
-	contxt.textBaseline = 'bottom';
-	contxt.fillText(textBottom, X, H - stroke_size, W);
-	contxt.strokeText(textBottom, X, H - stroke_size, W);
 }
 
 function onClickHandler({ target: el }) {
@@ -215,8 +245,7 @@ function onClickHandler({ target: el }) {
 		val = wrk.setImgSrc();
 		break;
 	case 'out-apply':
-		clearContext();
-		drawImage(wrk.img);
+		wrk[`draw_${wrk.mode}`]();
 		el.className = 'out-save';
 		break;
 	case 'out-item':
@@ -235,84 +264,23 @@ function onClickHandler({ target: el }) {
 		URL.revokeObjectURL(val);
 }
 
-function onChangeHandler({ target }) {
-	let [ key, func, val ] = target.id.split('_');
+function onChangeHandler({ target: { id, value, files, checked = true } }) {
+	let [ key, param, val = value ] = id.split('_');
 
 	switch(key) {
 	case 'file':
-		val = URL.createObjectURL(target.files[0]);
+		val = URL.createObjectURL(files[0]);
 		img_area.classList.add('active');
 		wrk.setImgSrc( val );
 		break;
 	case 'mode':
-		wrk_area.className = `work-area mode-${func}`;
-		if (func === 'kana') {} else { wrk.img.before(wrk.macro) }
+		wrk_area.className = `work-area mode-${wrk.mode = param}`;
+		if (param === 'kana') {
+
+		} else
+			img_area.children[0].after(wrk.macro);
+		break;
+	default:
+		wrk.setSettings(key, param, val, checked);
 	}
 }
-
-//var dElem = null;
-
-//var btn = document.getElementById("draw-btn");
-//var ctx = c.getContext("2d");
-//var fSz = c.width / 10
-//var offX = 0
-//var offY = 0
-//function Modulate(el) {
-//    return [
-//        (el.naturalWidth / el.clientWidth) * el.clientWidth,
-//    	(el.naturalHeight / el.clientHeight) * el.clientHeight
-//    ]
-//};
-//
-//btn.onclick = function(e){
-//    var pX = img.naturalWidth / img.width, pY = img.naturalHeight / img.height;
-//    ctx.drawImage(img, offX*pX,offY*pY, 500*pX, 500*pY, 0, 0, 500,500);
-//    ctx.fillText(tt.value,x,fSz);
-//	ctx.strokeText(tt.value,x,fSz);
-//    ctx.fillText(bt.value,x,y);
-//	ctx.strokeText(bt.value,x,y);
-//}
-//// Fill with gradient
-//ctx.font = 'normal bold '+fSz+'px verdana';
-//ctx.textAlign = 'center';
-//ctx.lineWidth = 3;
-//ctx.strokeStyle = 'black';
-//ctx.fillStyle = 'white';
-//
-//tt.oninput = bt.oninput = drawProgress;
-//c.onclick = function(e){
-//	if (e.offsetY > this.height / 2)
-//        bt.focus()
-//    else if (e.offsetY < this.height / 2)
-//        tt.focus()
-//}
-//c.onmousedown = function(e){
-//	var coords = getCoords(this);
-//		dElem = {
-//			el: this,
-//			shiftX: e.pageX - coords.left,
-//			shiftY: e.pageY - coords.top
-//		}
-//}
-//c.onmouseup = function(e){
-//	offY = Number(this.style.top.replace('px', ''))
-//    offX = Number(this.style.left.replace('px', ''))
-//}
-//
-//document.onmousemove = function(e) {
-//	if (dElem) {
-//		dElem.el.style.top  = e.clientY - dElem.shiftY + 'px';
-//		dElem.el.style.left = e.clientX - dElem.shiftX + 'px';
-//    	e.preventDefault()
-//    }
-//}
-//document.onmouseup = function(e) {
-//	dElem = null
-//}
-//	function getCoords(elem) {
-//		var box = elem.getBoundingClientRect();
-//		return {
-//			top: box.top + pageYOffset,
-//			left: box.left + pageXOffset
-//		}
-//	}

@@ -42,6 +42,10 @@ class SuwakoOptions extends HTMLLabelElement {
 			selectedIndex: { enumerable: true,
 				get: () => index, set: i => (this.value = options[i])
 			},
+			id: { enumerable: true,
+				get: () => suw_area.id,
+				set: m => (suw_area.id = suw_opts.htmlFor = m)
+			},
 			value: { enumerable: true,
 				get: () => suw_area.innerText,
 				set: s => (suw_area.textContent = (index = options.indexOf(s)) === -1 ? '' : s)
@@ -57,6 +61,7 @@ class SuwakoOptions extends HTMLLabelElement {
 		);
 		const applyText = () => {
 			resetCompl(), this.value = input.innerText.replace(/\n+/g, '');
+			this.dispatchEvent(new InputEvent('change', { bubbles: true }));
 		}
 		input.addEventListener('blur', applyText);
 		input.addEventListener('keydown', e => {
@@ -101,6 +106,7 @@ class SuwakoOptions extends HTMLLabelElement {
 		switch (e.target.classList[0]) {
 		case 'suw-item':
 			this.value = e.target.getAttribute('data-value');
+			this.dispatchEvent(new InputEvent('change', { bubbles: true }));
 			this.classList.remove('suw-active');
 			break;
 		case 'suw-toggle':

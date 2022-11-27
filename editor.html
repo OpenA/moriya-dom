@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -11,6 +12,7 @@
 		<script type="text/javascript" src="js/kanako-class.js"></script>
 		<script type="text/javascript" src="js/sanae-ruler.js"></script>
 		<script type="text/javascript" src="js/suwako-opts.js"></script>
+		<script type="text/javascript" src="js/canvas-tools.js"></script>
 	</head>
 	<body>
 		<div class="menu-area">
@@ -46,30 +48,30 @@
 						</svg>
 					</label>
 					<span class="fnt-inp-group">
-					<input type="checkbox" id="style_bold" hidden>
-					<label for="style_bold"></label>
-					<input type="checkbox" id="style_italic" hidden>
-					<label for="style_italic"></label>
+					<input id="font_weight_bold" type="checkbox" value="bold" hidden>
+					<label for="font_weight_bold"></label>
+					<input id="font_style_italic" type="checkbox" value="italic" hidden>
+					<label for="font_style_italic"></label>
 					</span>
 				</div>
 				<div class="set-line set-fill">
-					<input type="color" id="fill_color">
+					<input id="fill_color" type="color" checked>
 				</div>
 				<div class="set-line set-stroke">
-					<input type="color" id="stroke_color">
+					<input id="stroke_color" type="color" checked>
 				</div>
 				<table class="set-mode">
 				<tbody>
 					<tr>
-						<td class="set-mode-col1"><input type="radio" name="mode_edit" value="0" id="mode_demo"></td>
+						<td class="set-mode-col1"><input type="radio" name="draw_mode" value="demo" id="mode_demo"></td>
 						<td class="set-mode-col2"><label for="mode_demo"></label></td>
 					</tr>
 					<tr>
-						<td class="set-mode-col1"><input type="radio" name="mode_edit" value="1" id="mode_macro"></td>
+						<td class="set-mode-col1"><input type="radio" name="draw_mode" value="macro" id="mode_macro"></td>
 						<td class="set-mode-col2"><label for="mode_macro"></label></td>
 					</tr>
 					<tr>
-						<td class="set-mode-col1"><input type="radio" name="mode_edit" value="2" id="mode_kana"></td>
+						<td class="set-mode-col1"><input type="radio" name="draw_mode" value="kana" id="mode_kana"></td>
 						<td class="set-mode-col2"><label for="mode_kana"></label></td>
 					</tr>
 				</tbody>

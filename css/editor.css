@@ -101,12 +101,12 @@ input[name="text_align"]:checked + label[for] {
 	opacity: .3;
 	text-decoration: line-through;
 }
-label[for="style_bold"]:before {
+label[for="font_weight_bold"]:before {
 	content: 'Bold';
 	cursor: pointer;
 	font: bold 90% monospace;
 }
-label[for="style_italic"]:before {
+label[for="font_style_italic"]:before {
 	content: 'Italic';
 	cursor: pointer;
 	font: italic 90% monospace;
@@ -234,17 +234,25 @@ label[for="mode_kana"]:active:before {
 	border: 1px dotted #ddd;
 	outline: dotted 1px #333;
 	word-wrap: break-word;
-	width: 100%;
+	left: 0; right: 0;
+	cursor: text;
 }
 .macro-text:empty:after {
 	content: '|';
 	color: transparent;
+	-webkit-text-stroke-color: transparent;
 }
-.macro-text[contenteditable="true"] {
-	cursor: text;
+.mode-demo  #img_layer,
+.mode-demo .macro-cont {
+	border: 15px solid #444;
 }
-.mode-macro #top-text { position: absolute; top: 0; }
-.mode-macro #bottom-text { position: absolute; bottom: 0; }
+.mode-demo .macro-cont {
+	background-color: #444;
+}
+.mode-macro #mxt_top    { position: absolute; top: 0; }
+            #mxt_center { position: absolute; visibility: hidden; }
+.mode-macro #mxt_bottom { position: absolute; bottom: 0; }
+.mode-demo  #mxt_bottom { font-size: 50%; margin-top: 15px; }
 
 /* drop/select/load file */
 #file_url {

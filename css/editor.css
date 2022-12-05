@@ -320,8 +320,8 @@ label[for="file_upload"] {
 	--svg-grid: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" fill="lightgray" d="M0 0h10v10H0zm10 10h10v10H10z"/></svg>');
 }
 
-.work-area:not(.mode-text) > .text-area,
-.mode-text > *:not(.text-area),
+.work-area:not(.mode-kana) > .text-area,
+.mode-kana > *:not(.text-area),
 .img-area.active ~ .drop-area, .img-area:not(.active),
 .hid-font > .set-font, .hid-font #font_size,
 .hid-stroke > .set-stroke {

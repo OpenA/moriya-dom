@@ -19,7 +19,7 @@ class SanaeRuler extends HTMLElement {
 
 		sae_ruler.append(...rls);
 		sae_ruler.style.width = `${width}px`;
-		sae_ruler.addEventListener(UIDragable.DOWN, this);
+		sae_ruler.addEventListener(MUIDragable.DOWN, this);
 		sae_line.append(sae_value);
 		sae_value.addEventListener('input', e => {
 			/*...*/ clearTimeout(_t);
@@ -58,7 +58,7 @@ class SanaeRuler extends HTMLElement {
 	handleEvent(e) {
 
 		const isVal = e.target.tagName === 'SAE-VALUE',
-		      point = isVal ? e.type === 'input' : UIDragable.getPoint(e);
+		      point = isVal ? e.type === 'input' : MUIDragable.getPoint(e);
 		if ( !point )
 			return;
 		const { min, max } = this;
@@ -81,16 +81,14 @@ class SanaeRuler extends HTMLElement {
 			this.dispatchEvent(new InputEvent('change', { bubbles: true }));
 			return;
 		}
-		const callback = e => {
-			const o = UIDragable.getPoint(e);
-			if ( !o ) return;
-			let x = o.pointX - left - marginX, v;
+		const onAction = (pointX) => {
+			let x = pointX - left - marginX, v;
 			if (x < 0) {
 				v = min, x = 0;
 			} else  if ( x > maxLeft) {
 				v = max, x = maxLeft;
 			} else {
-				v = (o.pointX - left) / width * max;
+				v = (pointX - left) / width * max;
 			}
 			this.value = v, slider.style.left = `${x}px`;
 			this.dispatchEvent(new InputEvent('change', { bubbles: true }));
@@ -98,8 +96,8 @@ class SanaeRuler extends HTMLElement {
 		e.preventDefault();
 		e.stopPropagation();
 		if (e.target !== slider)
-			callback(e);
-		UIDragable.live(slider, { callback });
+			onAction(point.pointX);
+		MUIDragable.addListener(slider, onAction, point.isTouch);
 	}
 };
 customElements.define('sae-ruler', SanaeRuler);

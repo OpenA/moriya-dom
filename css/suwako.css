@@ -43,6 +43,7 @@
 	overflow: hidden;
 	white-space: nowrap;
 	padding: 2px 4px;
+	vertical-align: middle;
 }
 .suw-input *, .suw-toggle * {
 	display: inline;

@@ -1,75 +1,84 @@
 
-/* paragraph style */
-[name="ka_parent"]:not(:only-child):after {
+/* general style */
+ka-input, ka-pa, ka-resize, ka-cursor, ka-scroll, ka-naitxt {
+	display: block;
+}
+ka-sen {
+	display: inline;
+}
+ka-pa[name="ka_parent"]:not(:only-child):after {
 	content: ' ⤶';
 	opacity: .5;
 }
-.ka-sen:empty:after {
+ka-sen:empty:after {
 	content: ' ';
 }
-.ka-pa:only-child > [nako-place]:empty:after {
-	content: attr(nako-place);
+ka-pa:only-child > ka-sen:empty:after {
+	content: attr(kana-text);
 	opacity: .5;
 	display: block;
 }
-.ka-pa, .ka-txtarea {
+ka-pa, .ka-txtarea {
 	padding: 1px 4px;
 }
-.ka-hikon {
+ka-scroll {
 	overflow-y: auto;
 	word-break: break-all;
 	white-space: break-spaces;
 }
-
-/* cursor style */
-.ka-cursor {
-	border: 0 solid;
-}
-.ka-naidate {
-	border: 0 dashed;
-}
-.ka-cursor:before, .ka-naidate:before {
+ka-cursor:before {
 	content: '\A';
 }
-.wink-ko {
-	border-width: 0 1px 0 1px;
-}
-.ka-resize {
+ka-resize {
 	cursor: se-resize;
 	border-style: solid;
 	border-width: 0 2px 2px 0;
 	padding: 7px;
 }
 
+/* cursors style */
+.ka-scur { border: 0 solid;  }
+.ka-ecur { border: 0 dashed; }
+.wink-ko { border-width: 0 1px 0 1px; }
+
 /* color dark */
-.ko-shiki .ka-txtarea,
-.ko-shiki .ka-hikon {
+.ko-shiki  ka-scroll,
+.ko-shiki .ka-txtarea {
 	background: #4e4e4e;
 	color: #dedede;
 }
-.ko-shiki .ka-cursor {
+.ko-shiki ka-cursor {
 	border-color: #ccc;
 }
-.ko-shiki .ka-naidate,
-.ko-shiki .ka-resize {
+.ko-shiki ka-resize {
 	border-color: #aaa;
 }
-.ko-shiki .ka-pa:nth-child(even) {
+.ko-shiki ka-pa:nth-child(even) {
 	background-color: #444;
 }
-.ko-shiki .ka-pa:nth-child(odd) {
+.ko-shiki ka-pa:nth-child(odd) {
 	background-color: transparent;
 }
+.ko-shiki * {
+	--ka-selectColor: #498dcb;
+}
+
 /* color light */
-.ko-moko .ka-txtarea,
-.ko-moko .ka-hikon {
+.ko-suzu  ka-scroll,
+.ko-suzu .ka-txtarea {
 	background-color: cornsilk;
 	color: #755151;
 }
-.ko-moko .ka-cursor {
+.ko-suzu ka-cursor {
 	border-color: #b87878;
 }
-.ko-moko .ka-pa + .ka-pa {
+.ko-suzu ka-resize {
+	border-color: #b19d4e;
+}
+.ko-suzu ka-pa + ka-pa {
 	border: 0 solid rgba(122, 101, 43, 0.1);
 	border-top-width: 1px;
+}
+.ko-suzu * {
+	--ka-selectColor: #c0dbae;
 }

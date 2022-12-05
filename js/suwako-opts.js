@@ -34,7 +34,7 @@ class SuwakoOptions extends HTMLLabelElement {
 		} else if (marker) {
 			suw_area.setAttribute('data-marker', marker);
 		}
-		suw_opts.addEventListener(UIDragable.DOWN, this);
+		suw_opts.addEventListener(MUIDragable.DOWN, this);
 		suw_opts.append(suw_area, suw_list);
 
 		Object.defineProperties(this, {

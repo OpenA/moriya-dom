@@ -12,19 +12,19 @@ const wrk = {
 	},
 	get kana () {
 		const kana = new KanakoInput;
-		kana.kaNodeInput.classList.add('ko-moko');
-		Object.defineProperty(this, 'kana', { value: kana.kaNodeInput });
+		kana.classList.add('ko-suzu');
+		Object.defineProperty(this, 'kana', { value: kana });
 		return kana;
 	},
 	get macro () {
-		const value = _setup('div', { class: 'macro-cont', style: getSettingsStyle() });
+		const macro = _setup('div', { class: 'macro-cont', style: getSettingsStyle() });
 		for(const id of ['top', 'center', 'bottom']) {
-			value.appendChild(
+			macro.appendChild(
 				_setup('div', { id: `mxt_${id}`, class: 'macro-text', contentEditable: true })
 			);
 		}
-		Object.defineProperty(this, 'macro', { value });
-		return value;
+		Object.defineProperty(this, 'macro', { value: macro });
+		return macro;
 	},
 
 	draw_demo() {
@@ -276,7 +276,7 @@ function onChangeHandler({ target: { id, value, files, checked = true } }) {
 	case 'mode':
 		wrk_area.className = `work-area mode-${wrk.mode = param}`;
 		if (param === 'kana') {
-
+			wrk_area.lastElementChild.append(wrk.kana);
 		} else
 			img_area.children[0].after(wrk.macro);
 		break;
@@ -284,3 +284,6 @@ function onChangeHandler({ target: { id, value, files, checked = true } }) {
 		wrk.setSettings(key, param, val, checked);
 	}
 }
+
+let target = document.querySelector('input[name="draw_mode"]:checked');
+if (target) onChangeHandler({ target });

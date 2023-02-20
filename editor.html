@@ -3,13 +3,14 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Kanako Text Input Example</title>
-		<link rel="stylesheet" type="text/css" href="css/kanako.css" async>
+		<link rel="stylesheet" type="text/css" href="pasL/pasL.css" async>
 		<link rel="stylesheet" type="text/css" href="css/sanae.css" async>
 		<link rel="stylesheet" type="text/css" href="css/suwako.css" async>
 		<link rel="stylesheet" type="text/css" href="css/editor.css" async>
 		<link rel="stylesheet" type="text/css" href="css/fonts.css" async>
 		<script type="text/javascript" src="js/moriya-tools.js"></script>
-		<script type="text/javascript" src="js/kanako-input.js"></script>
+		<script type="text/javascript" src="pasL/pasL.js"></script>
+		<script type="text/javascript" src="pasL/towL.js"></script>
 		<script type="text/javascript" src="js/sanae-ruler.js"></script>
 		<script type="text/javascript" src="js/suwako-opts.js"></script>
 		<script type="text/javascript" src="js/canvas-tools.js"></script>
@@ -28,6 +29,18 @@
 				</div>
 			</div>
 			<div id="settings_panel">
+				<div class="set-line set-mode">
+					<input id="mode_none" type="radio" name="draw_mode" value="0" hidden>
+					<label for="mode_none"></label>
+					<input id="mode_demo" type="radio" name="draw_mode" value="1" hidden>
+					<label for="mode_demo"></label>
+					<input id="mode_macro" type="radio" name="draw_mode" value="2" hidden>
+					<label for="mode_macro"></label>
+					<span class="sec-ll"></span>
+					<input id="tool_crop" type="checkbox" hidden>
+					<label for="tool_crop"></label>
+					<label for="tool_towl"></label>
+				</div>
 				<div class="set-line set-font">
 					<input id="text_align_left" type="radio" name="text_align" value="left" hidden>
 					<label for="text_align_left" class="tex-ali-lines">
@@ -60,22 +73,6 @@
 				<div class="set-line set-stroke">
 					<input id="stroke_color" type="color" checked>
 				</div>
-				<table class="set-mode">
-				<tbody>
-					<tr>
-						<td class="set-mode-col1"><input type="radio" name="draw_mode" value="demo" id="mode_demo"></td>
-						<td class="set-mode-col2"><label for="mode_demo"></label></td>
-					</tr>
-					<tr>
-						<td class="set-mode-col1"><input type="radio" name="draw_mode" value="macro" id="mode_macro"></td>
-						<td class="set-mode-col2"><label for="mode_macro"></label></td>
-					</tr>
-					<tr>
-						<td class="set-mode-col1"><input type="radio" name="draw_mode" value="kana" id="mode_kana"></td>
-						<td class="set-mode-col2"><label for="mode_kana"></label></td>
-					</tr>
-				</tbody>
-				</table>
 				<input id="file_upload" type="file" hidden/>
 			</div>
 		</div>

@@ -167,28 +167,22 @@ input[type="color"] {
 .set-line *:not([contenteditable="true"]) {
 	user-select: none;
 }
-.set-mode {
-	width: 100%;
-	margin: 25px 0;
+.set-mode > * {
+	margin-left: 5px;
 }
-.set-mode-col1 {
-	padding: 10px;
-	text-align: center;
-}
-.set-mode-col2 {
-	padding: 10px 20px;
-	border: 0 dashed #444;
-	border-left-width: 1px;
-	text-align: center;
+.sec-ll {
+	padding: 6px 1px;
+	border: 0 solid #aaa;
+	border-width: 0 1px 0 1px;
 }
 
 
 /* mode radio buttons */
 label[for="mode_demo"] {
 	display: inline-block;
-	border: 5px solid #444;
-	padding: 10px 15px;
-	border-bottom-width: 15px;
+	border: 4px solid #444;
+	padding: 8px 14px;
+	border-bottom-width: 14px;
 }
 label[for="mode_macro"] {
 	display: inline-block;
@@ -213,20 +207,65 @@ label[for="mode_macro"]:after {
 	content: "text";
 	bottom: 0;
 }
-label[for="mode_kana"] {
+label[for="mode_none"] {
+	display: inline-block;
+	border: 1px dashed #444;
+	background-color: white;
+	padding: 16px 9px;
+}
+input[name=draw_mode]:checked + label {
+	background: #007bff var(--svg-Vchx) no-repeat center;
+	color: white;
+	border-color: white;
+	outline: solid 1px #444;
+}
+
+
+/* tool buttons */
+label[for="tool_crop"] {
+	display: inline-block;
+	padding: 16px;
+	position: relative;
+}
+label[for="tool_crop"]:before,
+label[for="tool_crop"]:after {
+	display: block;
+	position: absolute;
+	padding: 10px;
+	border: 0 outset #bbb;
+}
+label[for="tool_crop"]:before {
+	content: '';
+	top: 6px; right: 6px;
+	border-width: 4px 4px 0 0; 
+}
+label[for="tool_crop"]:after {
+	content: '';
+	bottom: 6px; left: 6px;
+	border-width: 0 0 4px 4px;
+}
+:checked + label[for="tool_crop"] {
+	background-color: #e8e6da;
+	outline: 1px #444 dashed;
+}
+:checked + label[for="tool_crop"]:before,
+:checked + label[for="tool_crop"]:after {
+	border-color: #a36969;
+}
+label[for="tool_towl"] {
 	font: 20px serif;
 	background: #eee;
 }
-label[for="mode_kana"]:before {
+label[for="tool_towl"]:before {
 	content: "T";
 	border: 1px solid #aaa;
 	padding: 4px 12px;
 	background: linear-gradient(to bottom, #ddd, #fff);
 }
-label[for="mode_kana"]:hover:before {
+label[for="tool_towl"]:hover:before {
 	background: linear-gradient(to bottom, #e5e5e5, #fff);
 }
-label[for="mode_kana"]:active:before {
+label[for="tool_towl"]:active:before {
 	background: #cecece;
 }
 
@@ -318,10 +357,10 @@ label[for="file_upload"] {
 :root {
 	--svg-drop: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 75"><path d="M48 0v48h12L30 75 0 48h12V0Z"/></svg>');
 	--svg-grid: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" fill="lightgray" d="M0 0h10v10H0zm10 10h10v10H10z"/></svg>');
+	--svg-Vchx: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="8px" width="8px"><text xmlns="http://www.w3.org/2000/svg" fill="white" x="0" font-size="10" font-weight="bold" font-family="serif" y="8">✓</text></svg>');
 }
 
-.work-area:not(.mode-kana) > .text-area,
-.mode-kana > *:not(.text-area),
+.work-area.mode-none .macro-cont,
 .img-area.active ~ .drop-area, .img-area:not(.active),
 .hid-font > .set-font, .hid-font #font_size,
 .hid-stroke > .set-stroke {

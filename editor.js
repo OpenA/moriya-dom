@@ -10,11 +10,15 @@ const wrk = {
 		Object.defineProperty(this, 'img', { value: img });
 		return img;
 	},
-	get kana () {
-		const kana = new KanakoInput;
-		kana.classList.add('ko-suzu');
-		Object.defineProperty(this, 'kana', { value: kana });
-		return kana;
+	get crop () {
+		const crop = new PasL({ lock: 2, edgies: true });
+		Object.defineProperty(this, 'crop', { value: crop });
+		return crop;
+	},
+	get towl () {
+		const towl = new TowL({ lock: 2, edgies: true });
+		Object.defineProperty(this, 'towl', { value: towl });
+		return towl;
 	},
 	get macro () {
 		const macro = _setup('div', { class: 'macro-cont', style: getSettingsStyle() });
@@ -267,18 +271,23 @@ function onClickHandler({ target: el }) {
 function onChangeHandler({ target: { id, value, files, checked = true } }) {
 	let [ key, param, val = value ] = id.split('_');
 
+	const img_layer = document.getElementById('img_layer');
+
 	switch(key) {
 	case 'file':
 		val = URL.createObjectURL(files[0]);
 		img_area.classList.add('active');
 		wrk.setImgSrc( val );
 		break;
+	case 'tool':
+		if (param === 'crop') {
+			img_layer.append(wrk.crop.box);
+		} else
+			img_layer.append(wrk.towl.box);
+		break;
 	case 'mode':
 		wrk_area.className = `work-area mode-${wrk.mode = param}`;
-		if (param === 'kana') {
-			wrk_area.lastElementChild.append(wrk.kana);
-		} else
-			img_area.children[0].after(wrk.macro);
+		img_layer.after(wrk.macro);
 		break;
 	default:
 		wrk.setSettings(key, param, val, checked);

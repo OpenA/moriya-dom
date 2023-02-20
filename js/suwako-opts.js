@@ -30,7 +30,7 @@ class SuwakoOptions extends HTMLLabelElement {
 		if (for_id)
 			suw_area.id = suw_opts.htmlFor = for_id;
 		if (editable) {
-			this.bindInteractive(suw_area);
+			this.__bindIteract(suw_area);
 		} else if (marker) {
 			suw_area.setAttribute('data-marker', marker);
 		}
@@ -53,7 +53,7 @@ class SuwakoOptions extends HTMLLabelElement {
 		});
 	}
 
-	bindInteractive(input) {
+	__bindIteract(input) {
 
 		let complete  = [], ic = -1;
 		const resetCompl = () => (

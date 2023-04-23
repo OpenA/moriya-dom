@@ -1,23 +1,31 @@
 
 const wrk = {
 
-	scale: 0, scv: document.createTextNode('100'), mode: '',
+	scale: 1,
+	mode: 'pic',
+	scv: document.createTextNode('100'),
+
+	has_crop    : false,
+	has_image   : false,
+	has_figures : false,
 
 	get img () {
-		const img = new Image; img.className = 'work-img';
-		const layer = document.getElementById('img_layer');
-		layer.appendChild(img).addEventListener('load', this);
+		const img = new Image; img.className = 'image-wrk';
+		img.addEventListener('load', this);
 		Object.defineProperty(this, 'img', { value: img });
+		this.has_image = true;
 		return img;
 	},
 	get crop () {
 		const crop = new PasL({ lock: 2, edgies: true });
 		Object.defineProperty(this, 'crop', { value: crop });
+		this.has_crop = true;
 		return crop;
 	},
-	get towl () {
+	get figures () {
 		const towl = new TowL({ lock: 2, edgies: true });
-		Object.defineProperty(this, 'towl', { value: towl });
+		Object.defineProperty(this, 'figures', { value: towl });
+		this.has_figures = true;
 		return towl;
 	},
 	get macro () {
@@ -74,14 +82,7 @@ const wrk = {
 	},
 
 	draw_macro() {
-		const iw = this.img.naturalWidth,
-		      ih = this.img.naturalHeight;
-		let maxW = (canvas.width  = iw);
-		let maxH = (canvas.height = ih);
-
-		const ctx = canvas.getContext('2d');
-		ctx.clearRect(0, 0, maxW, maxH);
-		ctx.drawImage(this.img, 0, 0, iw, ih, 0, 0, maxW, maxH);
+		const { ctx, maxW, maxH } = this.draw_pic();
 
 		const txtBottom  = this.macro.children.mxt_bottom.innerText;
 		const txtTop     = this.macro.children.mxt_top.innerText;
@@ -103,12 +104,15 @@ const wrk = {
 		params.vAlign = 'bottom', drawText(ctx, txtBottom, params);
 	},
 
-	setSettings(key, param, val, apply) {
-		if (key !== 'fill')
-			param = `${key === 'stroke' ? '-webkit-text-stroke' : key}-${param}`;
-		if (Number.isFinite(val))
-			val = `${val}px`;
-		this.macro.style[param] = apply ? val : null;
+	draw_pic() {
+		const iw = (canvas.width  = this.img.naturalWidth),
+		      ih = (canvas.height = this.img.naturalHeight),
+		     ctx = (canvas.getContext('2d'));
+
+		ctx.clearRect(0, 0, iw, ih);
+		ctx.drawImage(this.img, 0, 0, iw, ih, 0, 0, iw, ih);
+
+		return { ctx, maxW: iw, maxH: ih };
 	},
 
 	setImgSrc(src = '') {
@@ -118,33 +122,44 @@ const wrk = {
 		return old;
 	},
 
-	reScaleImage(f = 1) {
+	reScaleImage(f = 1, reset = false) {
+
 		this.scv.textContent = ((this.scale = f) * 100).toFixed(0);
-		this.img.style.width = `${this.img.naturalWidth * f}px`,
-		this.img.style.height = `${this.img.naturalHeight * f}px`;
+
+		if (this.has_image) {
+
+			let { width, height } = this.img;
+
+			if (!reset) {
+				this.img.style.width  = `${width  = this.img.naturalWidth  * f}px`;
+				this.img.style.height = `${height = this.img.naturalHeight * f}px`;
+			}
+			if (this.has_crop)
+				this.crop[`${reset ? 'set' : 'upd'}Zone`]({ width, height });
+		}
 	},
 
 	handleEvent({ target: el }) {
 
-		const { scale } = this;
+		let clss  = el.classList[0],
+		    reset = false,
+		    scale = this.scale;
 
-		let val = 1, msg = 'scale-change';
-		switch (el.classList[0]) {
-		case 'work-img':
-			msg = 'img-change';
-			val = el.width / el.naturalWidth;
+		switch (clss) {
+		case 'image-wrk': reset = true;
+		case 'scale-val': scale = 1;
 			break;
 		case 'scale-up':
-			val = scale + .05,
-			val = val >= 5 ? scale : scale >= 1.5 ? val + .05 : val;
+			var f = scale + (scale >= 1.5 ? .1 : .05);
+			scale = f >= 5 ? 5.0 : f;
 			break;
 		case 'scale-down':
-			val = scale - .05,
-			val = val <= 0 ? .05 : scale > 1.5 ? val - .05 : val;
+			var f = scale - (scale > 1.5 ? .1 : .05);
+			scale = f <= .05 ? .05 : f;
 			break;
 		}
-		this.reScaleImage(val);
-		window.postMessage({ msg, val }, '*');
+		this.reScaleImage(scale, reset);
+		window.postMessage({ msg: `${clss.substring(0,5)}-change`, val: scale }, '*');
 	}
 };
 
@@ -213,7 +228,7 @@ img_area.children[2].addEventListener('click', wrk);
 s_pannel.addEventListener('change', onChangeHandler);
 out_btn.addEventListener('click', onClickHandler);
 window.addEventListener('message', ({ data }) => {
-	if (data && data.msg === 'img-change')
+	if (data && data.msg === 'image-change')
 		out_btn.className = 'out-apply';
 });
 
@@ -232,6 +247,13 @@ const getSettingsStyle = () => {
 	return style.join(' ');
 }
 
+const setParamStyle = (style, key, param, val) => {
+	if (key !== 'fill') {
+		param = `${key === 'stroke' ? '-webkit-text-stroke' : key}-${param}`;
+	}
+	style[param] = Number.isFinite(val) ? `${val}px` : val;
+}
+
 const getInputValues = () => {
 	const values = Object.create(null);
 	for (const key in inputs)
@@ -245,7 +267,7 @@ function onClickHandler({ target: el }) {
 
 	switch(el.classList[0]) {
 	case 'clear-img':
-		img_area.classList.remove('active');
+		wrk_area.classList.remove('active');
 		val = wrk.setImgSrc();
 		break;
 	case 'out-apply':
@@ -275,24 +297,31 @@ function onChangeHandler({ target: { id, value, files, checked = true } }) {
 
 	switch(key) {
 	case 'file':
-		val = URL.createObjectURL(files[0]);
-		img_area.classList.add('active');
-		wrk.setImgSrc( val );
+		img_layer.append(wrk.img);
+		val = wrk.setImgSrc( URL.createObjectURL(files[0]) );
+		wrk_area.classList.add('active');
 		break;
-	case 'tool':
-		if (param === 'crop') {
-			img_layer.append(wrk.crop.box);
-		} else
-			img_layer.append(wrk.towl.box);
+	case 'crop':
+		if (checked) {
+			let img = null, box = wrk.crop.box;
+			if (wrk.has_image)
+				wrk.crop.setZone((img = wrk.img));
+			img_layer.insertBefore(box, img);
+			wrk.has_crop = true;
+		} else if (wrk.has_crop) {
+			img_layer.removeChild(wrk.crop.box);
+			wrk.has_crop = false;
+		}
 		break;
 	case 'mode':
-		wrk_area.className = `work-area mode-${wrk.mode = param}`;
+		img_area.className = `img-area mode-${wrk.mode = param}`;
 		img_layer.after(wrk.macro);
 		break;
 	default:
-		wrk.setSettings(key, param, val, checked);
+		setParamStyle(wrk.macro.style, key, param, checked ? val : null);
 	}
 }
 
 let target = document.querySelector('input[name="draw_mode"]:checked');
+             document.getElementById('crop_tool').checked = false;
 if (target) onChangeHandler({ target });

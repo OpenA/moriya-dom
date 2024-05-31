@@ -29,22 +29,26 @@ const wrk = {
 		return towl;
 	},
 	get macro () {
-		const macro = _setup('div', { class: 'macro-cont', style: getSettingsStyle() });
-		for(const id of ['top', 'center', 'bottom']) {
-			macro.appendChild(
-				_setup('div', { id: `mxt_${id}`, class: 'macro-text', contentEditable: true })
+		const macro = PasL.cnode('div', { className: 'macro-cont', style: inputs.toCss() });
+		for (const p of ['top', 'center', 'bottom']) {
+			macro.append(
+				PasL.cnode('div', { id: `mxt_${p}`, className: 'macro-text', contentEditable: true })
 			);
 		}
 		Object.defineProperty(this, 'macro', { value: macro });
 		return macro;
 	},
+	get canvas() {
+		return document.getElementById('canvas');
+	},
 
 	draw_demo() {
-		const iw = this.img.naturalWidth, maxS = 750,
-		      ih = this.img.naturalHeight, isVert = iw < ih;
-		let maxW = 0, txtY = 0, x = 40, w = iw,
-		    maxH = 0, txtH = 0, y = 40, h = ih;
+		const { canvas, img, macro } = this;
+		const iw = img.naturalWidth, maxS = 750,
+		      ih = img.naturalHeight, isVert = iw < ih;
 
+		let maxW = 0, txtY = 0, x = 40, w = iw,
+			maxH = 0, txtH = 0, y = 40, h = ih;
 		if (isVert) {
 			if (maxS < ih) h = maxS, w *= maxS / ih;
 			maxW = w + 160, x = 80;
@@ -57,8 +61,8 @@ const wrk = {
 		let ctx = drawLayers(canvas, maxW, maxH, [
 			{ x: 0, y: 0, w: maxW, h: maxH, fill: '#000' },
 		]);
-		const txtBot = this.macro.children.mxt_bottom.innerText;
-		const txtTop = this.macro.children.mxt_top.innerText;
+		const txtBot = macro.children.mxt_bottom.innerText;
+		const txtTop = macro.children.mxt_top.innerText;
 		const txtP   = {
 			hAlign  : 'center', maxW, maxH,
 			fStyle  : inputs.font_style.checked ? inputs.font_style.value : '',
@@ -72,7 +76,7 @@ const wrk = {
 		ctx = drawLayers(canvas, maxW, maxH, [
 			{ x: 0, y: 0, w: maxW, h: maxH, fill: '#000' },
 			{ x: x - 5, y: y - 5, w: w + 10, h: h + 10, r: 4, fill: '#fff' },
-			{ x, y, w, h, r: [0, 0, iw, ih], fill: this.img }
+			{ x, y, w, h, r: [0, 0, iw, ih], fill: img }
 		]);
 		ctx.lineWidth = 3;
 		ctx.strokeStyle = '#000';
@@ -105,12 +109,20 @@ const wrk = {
 	},
 
 	draw_pic() {
-		const iw = (canvas.width  = this.img.naturalWidth),
-		      ih = (canvas.height = this.img.naturalHeight),
+		const { img, has_crop, canvas } = this;
+
+		let x = 0, w = img.naturalWidth,
+		    y = 0, h = img.naturalHeight;
+
+		if (has_crop) {
+			[x, y, w, h] = this.crop.getCoords(w / img.width);
+		}
+		const iw = (canvas.width  = w),
+		      ih = (canvas.height = h),
 		     ctx = (canvas.getContext('2d'));
 
 		ctx.clearRect(0, 0, iw, ih);
-		ctx.drawImage(this.img, 0, 0, iw, ih, 0, 0, iw, ih);
+		ctx.drawImage(img, x, y, w, h, 0, 0, iw, ih);
 
 		return { ctx, maxW: iw, maxH: ih };
 	},
@@ -122,20 +134,22 @@ const wrk = {
 		return old;
 	},
 
-	reScaleImage(f = 1, reset = false) {
+	reScaleImage(s = 1, reset = false) {
 
-		this.scv.textContent = ((this.scale = f) * 100).toFixed(0);
+		this.scv.textContent = ((this.scale = s) * 100).toFixed(0);
 
 		if (this.has_image) {
 
 			let { width, height } = this.img;
 
-			if (!reset) {
-				this.img.style.width  = `${width  = this.img.naturalWidth  * f}px`;
-				this.img.style.height = `${height = this.img.naturalHeight * f}px`;
+			if (!reset && s !== 1) {
+				this.img.style.width  = `${width  = Math.floor(this.img.naturalWidth  * s)}px`;
+				this.img.style.height = `${height = Math.floor(this.img.naturalHeight * s)}px`;
 			}
-			if (this.has_crop)
+			if (this.has_crop) {
 				this.crop[`${reset ? 'set' : 'upd'}Zone`]({ width, height });
+				this.crop.ratio = 1/s;
+			}
 		}
 	},
 
@@ -163,11 +177,25 @@ const wrk = {
 	}
 };
 
-const s_pannel = document.getElementById('settings_panel'),
-      fi_group = s_pannel.querySelector('.fnt-inp-group');
+const download = document.createElement('a'),
+	  s_pannel = document.getElementById('settings_panel'),
+	  fi_group = s_pannel.querySelector('.fnt-inp-group'),
+	  fig_list = s_pannel.firstElementChild.appendChild(
+	new SuwakoOptions({
+		for_id: 'figs_list', type: 0, marker: 'F',
+		list: [
+			{ class: 'fnt-fam', 'data-value': 'triangle' },
+			{ class: 'fnt-fam', 'data-value': 'line' },
+			{ class: 'fnt-fam', 'data-value': 'rect' },
+			{ class: 'fnt-fam', 'data-value': 'circle' },
+			{ class: 'fnt-fam', 'data-value': 'ellipse' },
+			{ class: 'fnt-fam', 'data-value': 'text' }
+		]
+	})
+);
 
-/* inputs collection like form.elements */
-const inputs = {
+/** inputs collection like form.elements */
+const inputs = Object.freeze({
 	font_style   : fi_group.children.font_style_italic,
 	font_weight  : fi_group.children.font_weight_bold,
 	fill_color   : document.getElementById('fill_color'),
@@ -208,17 +236,41 @@ const inputs = {
 			text_align_right: right
 		} = fi_group.parentNode.children;
 		return center.checked ? center : right.checked ? right : left
+	},
+
+	toCss() {
+		const keys = Object.keys(this),
+		      styl = [];
+		for(let key of keys) {
+			let{ checked, value } = this[key];
+			if ( checked === false )
+				continue;
+			if (Number.isFinite(value))
+				value += 'px';
+			if (key.startsWith('stroke'))
+				key = '-webkit-text-stroke-'+ key.substring('stroke_'.length);
+			else
+				key = (key.startsWith('fill') ? '' : key.substring(0,4) +'-') + key.substring(5);
+			styl.push(`${key}: ${value}`);
+		}
+		return styl.join(';');
+	},
+	toJsonObj() {
+		const values = Object.create(null);
+		for (const key of Object.keys(this))
+			values[key] = this[key].value;
+		return values;
 	}
-};
+});
+
 /* add custom inputs */
 inputs.fill_color.after(inputs.font_size);
 inputs.stroke_color.after(inputs.stroke_width);
 fi_group.append(inputs.font_family);
 
-const canvas   = document.getElementById('canvas');
 const wrk_area = document.body.querySelector('.work-area'),
-      img_area = wrk_area.querySelector('.img-area'),
-      out_btn  = canvas.nextElementSibling;
+      img_area = document.body.querySelector('.work-area .img-area'),
+      out_btn  = document.getElementById('canvas').nextElementSibling;
 
 /* add handlers */
 img_area.children[2].children[1].append(wrk.scv); // scale-val
@@ -232,21 +284,6 @@ window.addEventListener('message', ({ data }) => {
 		out_btn.className = 'out-apply';
 });
 
-const getSettingsStyle = () => {
-	const keys = Object.keys(inputs), style = [];
-	for(let key of keys) {
-		let { value, checked } = inputs[key];
-		if (checked === false)
-			continue;
-		key = String.prototype.replace.apply(key,
-			key.startsWith('stroke') ? [/^stroke_(\w+)$/, '-webkit-text-stroke-$1'] : 
-			key.startsWith('fill') ? ['fill_', ''] : ['_', '-']
-		);
-		style.push(`${key}: ${value}${Number.isFinite(value) ? 'px' : ''};`);
-	}
-	return style.join(' ');
-}
-
 const setParamStyle = (style, key, param, val) => {
 	if (key !== 'fill') {
 		param = `${key === 'stroke' ? '-webkit-text-stroke' : key}-${param}`;
@@ -254,16 +291,9 @@ const setParamStyle = (style, key, param, val) => {
 	style[param] = Number.isFinite(val) ? `${val}px` : val;
 }
 
-const getInputValues = () => {
-	const values = Object.create(null);
-	for (const key in inputs)
-		values[key] = inputs[key].value;
-	return values;
-}
-
 function onClickHandler({ target: el }) {
 
-	let val = '';
+	let val = '', txt = el.innerText;
 
 	switch(el.classList[0]) {
 	case 'clear-img':
@@ -275,13 +305,12 @@ function onClickHandler({ target: el }) {
 		el.className = 'out-save';
 		break;
 	case 'out-item':
-		let type = el.innerText;
-		el = out_btn, val = out_btn.lastElementChild.href;
-		canvas.toBlob(blob => {
-			out_btn.lastElementChild.href = URL.createObjectURL(blob);
-			out_btn.lastElementChild.download = 'canvas.'+ (type === 'jpeg' ? 'jpg' : type);
-			out_btn.lastElementChild.click();
-		}, `image/${type}`);
+		el = out_btn, val = download.href;
+		wrk.canvas.toBlob(blob => {
+			download.href = URL.createObjectURL(blob);
+			download.download = 'canvas.'+ (txt === 'jpeg' ? 'jpg' : txt);
+			download.click();
+		}, `image/${txt}`);
 	case 'out-save':
 		el.classList.toggle('active');
 		break;
@@ -294,6 +323,7 @@ function onChangeHandler({ target: { id, value, files, checked = true } }) {
 	let [ key, param, val = value ] = id.split('_');
 
 	const img_layer = document.getElementById('img_layer');
+	const img = wrk.has_image && wrk.img;
 
 	switch(key) {
 	case 'file':
@@ -301,12 +331,22 @@ function onChangeHandler({ target: { id, value, files, checked = true } }) {
 		val = wrk.setImgSrc( URL.createObjectURL(files[0]) );
 		wrk_area.classList.add('active');
 		break;
+	case 'figs':
+		if (val && img) {
+			if(!wrk.has_figures)
+				wrk.figures.setViewBox(img.width, img.height, 2);
+			wrk.figures.addFigure(val);
+			img_layer.insertBefore(wrk.figures.box, img);
+			wrk.has_figures = true;
+		} else if (wrk.has_figures) {
+			img_layer.removeChild(wrk.figures.box);
+			wrk.has_figures = false;
+		}
+		break;
 	case 'crop':
-		if (checked) {
-			let img = null, box = wrk.crop.box;
-			if (wrk.has_image)
-				wrk.crop.setZone((img = wrk.img));
-			img_layer.insertBefore(box, img);
+		if (checked && img) {
+			wrk.crop.setZone(img);
+			img_layer.insertBefore(wrk.crop.box, img);
 			wrk.has_crop = true;
 		} else if (wrk.has_crop) {
 			img_layer.removeChild(wrk.crop.box);

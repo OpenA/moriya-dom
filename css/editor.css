@@ -249,18 +249,14 @@ label[for="crop_tool"]:after {
 }
 label[for="figs_list"] {
 	font: 20px serif;
-	background: #eee;
-}
-label[for="figs_list"]:before {
-	content: "T";
 	border: 1px solid #aaa;
 	padding: 4px 12px;
-	background: linear-gradient(to bottom, #ddd, #fff);
+	background: #eee linear-gradient(to bottom, #ddd, #fff);
 }
-label[for="figs_list"]:hover:before {
-	background: linear-gradient(to bottom, #e5e5e5, #fff);
+label[for="figs_list"]:hover {
+	background-image: linear-gradient(to bottom, #e5e5e5, #fff);
 }
-label[for="figs_list"]:active:before {
+label[for="figs_list"].suw-active {
 	background: #cecece;
 }
 

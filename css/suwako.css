@@ -1,11 +1,11 @@
 /* sanae options style */
-.suw-opts {
+.suw-opts, .suw-toggle-opts {
 	position: relative;
 	display: inline-block;
 }
 .suw-list {
 	display: block;
-	margin: 0; padding: 0;
+	margin: 0; padding: 0; left: 0;
 	list-style: outside none none;
 	visibility: hidden;
 }

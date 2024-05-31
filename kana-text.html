@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Kanako Text Input Example</title>
+		<link rel="stylesheet" type="text/css" href="css/kanako.css" async>
+		<link rel="stylesheet" type="text/css" href="css/sanae.css" async>
+		<link rel="stylesheet" type="text/css" href="css/suwako.css" async>
+		<link rel="stylesheet" type="text/css" href="css/editor.css" async>
+		<link rel="stylesheet" type="text/css" href="css/fonts.css" async>
+		<script type="text/javascript" src="js/moriya-tools.js"></script>
+		<script type="text/javascript" src="js/kanako-input.js"></script>
+		<script type="text/javascript" src="js/sanae-ruler.js"></script>
+		<script type="text/javascript" src="js/suwako-opts.js"></script>
+		<style>
+			.text-area {
+				flex: 1 1;
+				background: #cec49e;
+				overflow: auto;
+				padding: 20px;
+			}
+			.text-area .ka-txtarea {
+				left: 100%!important;
+				width: 330px!important;
+				height: 100%!important;
+				margin-left: 20px!important;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="menu-area">
+			<div id="settings_panel">
+
+			</div>
+		</div>
+		<div class="text-area">
+
+		</div>
+		<script>
+			const txt_area = document.body.querySelector('.text-area');
+			const kana = txt_area.appendChild(new KanakoInput);
+			kana.classList.add('ko-suzu');
+		</script>
+	</body>
+</html>

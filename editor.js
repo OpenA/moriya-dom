@@ -184,12 +184,12 @@ const download = document.createElement('a'),
 	new SuwakoOptions({
 		for_id: 'figs_list', type: 0, marker: 'F',
 		list: [
-			{ class: 'fnt-fam', 'data-value': 'triangle' },
-			{ class: 'fnt-fam', 'data-value': 'line' },
-			{ class: 'fnt-fam', 'data-value': 'rect' },
-			{ class: 'fnt-fam', 'data-value': 'circle' },
-			{ class: 'fnt-fam', 'data-value': 'ellipse' },
-			{ class: 'fnt-fam', 'data-value': 'text' }
+			{ class: 'fnt-fam', value: 'triangle' },
+			{ class: 'fnt-fam', value: 'line' },
+			{ class: 'fnt-fam', value: 'rect' },
+			{ class: 'fnt-fam', value: 'circle' },
+			{ class: 'fnt-fam', value: 'ellipse' },
+			{ class: 'fnt-fam', value: 'text' }
 		]
 	})
 );
@@ -217,17 +217,17 @@ const inputs = Object.freeze({
 	font_family: new SuwakoOptions({
 		for_id: 'font_family', type: 2, place_text: 'Default',
 		list: [
-			{ class: 'fnt-fam', style: 'font-family: Arial', 'data-value': 'Arial' },
-			{ class: 'fnt-fam', style: 'font-family: Impact', 'data-value': 'Impact' },
-			{ class: 'fnt-fam', style: 'font-family: Tahoma', 'data-value': 'Tahoma' },
-			{ class: 'fnt-fam', style: 'font-family: Verdana', 'data-value': 'Verdana' },
+			{ class: 'fnt-fam', style: 'font-family: Arial', value: 'Arial' },
+			{ class: 'fnt-fam', style: 'font-family: Impact', value: 'Impact' },
+			{ class: 'fnt-fam', style: 'font-family: Tahoma', value: 'Tahoma' },
+			{ class: 'fnt-fam', style: 'font-family: Verdana', value: 'Verdana' },
 			{ text: 'funcy fonts' },
-			{ class: 'fnt-fam', style: 'font-family: "Agora Slab Pro"', 'data-value': 'Agora Slab Pro' },
-			{ class: 'fnt-fam', style: 'font-family: Akademitscheskaya', 'data-value': 'Akademitscheskaya' },
-			{ class: 'fnt-fam', style: 'font-family: "Beau Sans Pro"', 'data-value': 'Beau Sans Pro' },
-			{ class: 'fnt-fam', style: 'font-family: "Gotham Narrow"', 'data-value': 'Gotham Narrow' },
-			{ class: 'fnt-fam', style: 'font-family: Gunplay', 'data-value': 'Gunplay' },
-			{ class: 'fnt-fam', style: 'font-family: Ponter', 'data-value': 'Ponter' }
+			{ class: 'fnt-fam', style: 'font-family: "Agora Slab Pro"', value: 'Agora Slab Pro' },
+			{ class: 'fnt-fam', style: 'font-family: Akademitscheskaya', value: 'Akademitscheskaya' },
+			{ class: 'fnt-fam', style: 'font-family: "Beau Sans Pro"', value: 'Beau Sans Pro' },
+			{ class: 'fnt-fam', style: 'font-family: "Gotham Narrow"', value: 'Gotham Narrow' },
+			{ class: 'fnt-fam', style: 'font-family: Gunplay', value: 'Gunplay' },
+			{ class: 'fnt-fam', style: 'font-family: Ponter', value: 'Ponter' }
 		]
 	}),
 	get text_align() {

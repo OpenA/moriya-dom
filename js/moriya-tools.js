@@ -2,15 +2,14 @@
  * **Moriya UI Dragable**
  * 
  */
+const /**/ MUI_HasTouch = 'ontouchstart' in window,
+MUI_DOWN = MUI_HasTouch ? 'touchstart' : 'mousedown',
+MUI_MOVE = MUI_HasTouch ? 'touchmove'  : 'mousemove',
+MUI_UP   = MUI_HasTouch ? 'touchend'   : 'mouseup';
+
 const MUIDragable = {
 
 	zIndex: 1,
-
-	DOWN: 'mousedown',
-	MOVE: 'mousemove',
-	UP: 'mouseup',
-
-	hasTouch: 'ontouchstart' in window,
 /**
  * Bind live action for element with init point params
  * 
@@ -31,7 +30,7 @@ const MUIDragable = {
 		const { style } = el;
 		const { left, top, width, height } = el.getBoundingClientRect();
 		const {
-			minW = 0, isTouch = this.hasTouch, action,
+			minW = 0, isTouch = MUI_HasTouch, action,
 			minH = 0, hasFixed = style.position === 'fixed' } = point;
 
 		let offsetX = 0, fchange = () => void 0, offsetY = 0;
@@ -128,12 +127,6 @@ const MUIDragable = {
 	}
 }
 
-if (MUIDragable.hasTouch) {
-	MUIDragable.DOWN = 'touchstart';
-	MUIDragable.MOVE = 'touchmove';
-	MUIDragable.UP   = 'touchend';
-}
-
 /**
  * **Moriya Animation** - a high-level implementation of JS Animation
  * * `dropDelay` - sets time delay between iterations in milliseconds
@@ -147,31 +140,49 @@ class MoriyaAnimation {
  */
 	constructor(duration = 1200) {
 		const _emit = (time = 0) => {
-			const { startTime, dropDelay, duration, onIteration } = this,
-			    changeTime = (dropDelay <= 0 ? duration : dropDelay) <= (time - startTime),
-			    iterChange = dropDelay <= 0 && changeTime && onIteration instanceof Function;
+			const { _sTime, dropDelay, duration, _emits } = this,
+				changeTime = (dropDelay <= 0 ? duration : dropDelay) <= (time - _sTime),
+				iterChange = dropDelay <= 0 && changeTime;
 			if (changeTime) {
-				 this.dropDelay = 0;
-				_emit.startTime = time;
+				this.dropDelay = 0;
+				this._sTime = time;
 			}
-			_emit.id = window.requestAnimationFrame(_emit);
-			if (iterChange)
-				this.onIteration();
+			this._anmID = window.requestAnimationFrame(_emit);
+			for (let i = 1; i < _emits.length && iterChange; i++)
+				_emits[i](time);
 		};
 		this.duration = duration;
-		this.dropDelay = 0;
-		this.onIteration = null;
-		Object.defineProperty(this, '_emit', { value: _emit });
+		this.dropDelay = this._sTime = 0;
+		this._anmID = -1;
+		this._emits = [_emit];
+		Object.defineProperties(this, {
+			_emits: { enumerable: false, writable: false },
+			_sTime: { enumerable: false, writable: true },
+			_anmID: { enumerable: false, writable: true }
+		});
 	}
 	reset(reStart = true) {
-		const { _emit } = this;
-		if (_emit.id >= 0)
-			window.cancelAnimationFrame(_emit.id);
-		_emit.startTime = this.dropDelay = 0;
-		_emit.id = reStart ? window.requestAnimationFrame(time => {
-			_emit.startTime = time;
-			_emit.id = window.requestAnimationFrame(_emit);
+		let { _anmID, _emits:[_emit] } = this;
+		if (_anmID != -1)
+			window.cancelAnimationFrame(_anmID);
+		this._sTime = this.dropDelay = 0;
+		this._anmID = reStart ? window.requestAnimationFrame(time => {
+			this._sTime = time;
+			this._anmID = window.requestAnimationFrame(_emit);
 		}) : -1;
+	}
+/** Add/Remove oniteration event
+ * @param {()=>void} handler
+ * @param {boolean} del - remove listener
+*/
+	addListener(handler, del = false) {
+		if (handler instanceof Function) {
+			let idx = this._emits.indexOf(handler);
+			if (idx != -1 && del)
+				this._emits.splice(idx,1);
+			else if (!del && idx == -1)
+				this._emits.push(handler);
+		}
 	}
 }
 

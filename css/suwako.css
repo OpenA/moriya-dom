@@ -4,6 +4,7 @@
 	display: inline-block;
 }
 .suw-list {
+	position: absolute;
 	display: block;
 	margin: 0; padding: 0; left: 0;
 	list-style: outside none none;

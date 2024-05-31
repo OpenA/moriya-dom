@@ -40,16 +40,15 @@ class KanakoInput extends HTMLElement {
 
 		const anim = new MoriyaAnimation;
 		let ka_pa  = _setup('ka-pa' , { name: 'ka_parent' }),
-		    ka_sen = _setup('ka-sen', { name: 'ka_pasen', 'kana-text': placeholder }),
-		    tx_ctx = null;
+		    ka_sen = _setup('ka-sen', { name: 'ka_pasen', 'kana-text': placeholder });
 
-		anim.onIteration = () => ka_scur.classList.toggle('wink-ko');
+		anim.addListener(() => ka_scur.classList.toggle('wink-ko'));
 		ka_naitxt.appendChild(ka_pa).appendChild(ka_sen).append('');
 		ka_txtarea.addEventListener('input', this);
 		ka_txtarea.addEventListener('blur', () => {
 			anim.reset(false), ka_scur.classList.remove('wink-ko');
 		});
-		ka_nako.addEventListener(MUIDragable.DOWN, e => {
+		ka_nako.addEventListener(MUI_DOWN, e => {
 			const el = e.target,
 			   point = MUIDragable.getPoint(e);
 			if (el === ka_txtarea || el === ka_scur || !point)
@@ -72,17 +71,10 @@ class KanakoInput extends HTMLElement {
 			e.preventDefault();
 			MUIDragable.live(ka_nako, point);
 		});
-
-		const getContext = (el, type = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE) => {
-			if(!tx_ctx)
-				tx_ctx = new XPathEvaluator().createExpression('.//text()');
-			return tx_ctx.evaluate(el, type);
-		}
 		Object.defineProperties(this, {
 			kaTextArea : { value: ka_txtarea },
 			kaContainer: { value: ka_naitxt  },
 			kaTxtCursor: { value: ka_scur    },
-			getContext : { value: getContext },
 			placeholder: {
 				set: msg => kasen_coll[0].setAttribute('kana-text', (placeholder = msg)),
 				get: () => placeholder
@@ -90,12 +82,19 @@ class KanakoInput extends HTMLElement {
 			kaPaList : { get: () => Array.from(ka_naitxt.children) },
 			kaSenList: { get: () => Array.from(kasen_coll) },
 
-			kaRgo: { get: () => Object.defineProperty(this, 'kaRgo', { value: new Range }).kaRgo, configurable: true },
 			kaPa : { get: () => ka_naitxt.children.ka_parent },
 			kaSen: { get: () => kasen_coll.ka_pasen }
 		});
-		if (true)
-			ka_txtarea.style.left = ka_txtarea.style.width = ka_txtarea.style.height = '100%';
+	}
+	get kaTex() {
+		let e = new XPathEvaluator().createExpression('.//text()');
+		Object.defineProperty(this, 'kaTex', { value: e, configurable: true });
+		return e;
+	}
+	get kaRgo() {
+		let r = new Range;
+		Object.defineProperty(this, 'kaRgo', { value: r, configurable: true });
+		return r;
 	}
 
 	insertText(txt = '') {
@@ -112,7 +111,7 @@ class KanakoInput extends HTMLElement {
 
 	setCarretPos(cont, pos) {
 
-		const { kaSenList, kaTextArea, kaRgo, kaSen, kaPa } = this;
+		const { kaSenList, kaTextArea, kaRgo, kaSen, kaPa, kaTex } = this;
 
 		let ukapa = null, ukasen = null, isTxt = cont.nodeName === '#text';
 
@@ -129,7 +128,7 @@ class KanakoInput extends HTMLElement {
 		if (kaPa !== ukapa)
 			kaPa.removeAttribute('name'), ukapa.setAttribute('name', 'ka_parent');
 		if (!isTxt) {
-			let res = this.getContext(cont);
+			let res = kaTex.evaluate(cont, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
 			cont = res.snapshotItem(pos === 1 ? res.snapshotLength - 1 : 0),
 			pos  = pos === 1 ? cont.length : 0;
 		}
@@ -141,7 +140,7 @@ class KanakoInput extends HTMLElement {
 
 	setSelectionRange(sCont, sPos, eCont, ePos) {
 
-		const { kaSenList, kaTextArea, kaRgo } = this;
+		const { kaSenList, kaTextArea, kaRgo, kaTex } = this;
 
 		let inLine = eCont === sCont, isTxt = sCont.nodeName === '#text',
 		    isReverse = inLine && sPos > ePos, six = -1, eix = -1;
@@ -157,7 +156,7 @@ class KanakoInput extends HTMLElement {
 		if (inLine && sPos === ePos || eix === -1)
 			return;
 		if (!inLine) {
-			let xRes = this.getContext(kaSenList[eix]);
+			let xRes = kaTex.evaluate(kaSenList[eix], XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
 			if (!isTxt) {
 				cont = xRes.snapshotItem(ePos === 1 ? xRes.snapshotLength - 1 : 0),
 				pos  = ePos === 1 ? eCont.length : 0;
@@ -219,7 +218,7 @@ class KanakoInput extends HTMLElement {
 
 	deleteBackward() {
 
-		const { kaPa, kaSen, kaRgo } = this;
+		const { kaPa, kaSen, kaRgo, kaTex } = this;
 
 		let cont = kaRgo.startContainer,
 		     pos = kaRgo.startOffset;
@@ -227,7 +226,7 @@ class KanakoInput extends HTMLElement {
 		if (pos > 0) {
 			cont.deleteData(--pos, 1);
 		} else {
-			let xRes = this.getContext(kaSen, XPathResult.ORDERED_NODE_ITERATOR_TYPE),
+			let xRes = kaTex.evaluate(kaSen, XPathResult.ORDERED_NODE_ITERATOR_TYPE),
 			    prev = xRes.iterateNext(), next;
 
 			if (prev !== cont) {
@@ -245,7 +244,8 @@ class KanakoInput extends HTMLElement {
 				let list = this.kaSenList,
 				    pidx = list.indexOf(kaSen);
 				if (pidx > 0) {
-					xRes = this.getContext((next = list[--pidx])),
+					next = list[--pidx];
+					xRes = kaTex.evaluate(next, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE),
 					cont = xRes.snapshotItem(xRes.snapshotLength - 1),
 					pos  = cont.length;
 					next.append( ...kaSen.childNodes), kaPa.remove();
@@ -275,9 +275,9 @@ class KanakoInput extends HTMLElement {
 
 	insertParagraph() {
 
-		const { kaPa, kaSen, kaRgo } = this;
+		const { kaPa, kaSen, kaRgo, kaTex } = this;
 
-		const xRes = this.getContext(kaSen),
+		const xRes = kaTex.evaluate(kaSen, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE),
 		      xLen = xRes.snapshotLength;
 
 		let nkapa = document.createElement('ka-pa'), cont = kaRgo.startContainer,
@@ -302,7 +302,7 @@ class KanakoInput extends HTMLElement {
 					kaRgo.setStart(cont, pos);
 				kaRgo.setEndAfter(kaSen.lastChild);
 				nline.append( kaRgo.extractContents() );
-				cont = this.getContext(nline, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+				cont = kaTex.evaluate(nline, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
 			}
 			nkapa.setAttribute('name', 'ka_parent'), kaPa.removeAttribute('name');
 			nline.setAttribute('name', 'ka_pasen'), kaSen.removeAttribute('name');

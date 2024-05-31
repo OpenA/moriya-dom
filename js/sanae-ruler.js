@@ -5,24 +5,31 @@ class SanaeRuler extends HTMLElement {
 		label = 'size', width = 150, min = 0,
 		type  = 'px', precision = 0, max = 100,
 	}) {
-		const sae_ruler  =  super(); if (id) sae_ruler.id = id;
-		const sae_line   = _setup('sae-line', { 'data-label': label });
-		const sae_value  = _setup('sae-value', { 'data-type': type, text: String(min), spellcheck: false, contentEditable: true });
-		const sae_slider = _setup('sae-slider', { style: 'left: 0;' });
+		const sae_ruler  = super(); if (id) sae_ruler.id = id;
+		const sae_line   = this.createIn(sae_ruler, 'sae-line'  );
+		const sae_slider = this.createIn(sae_ruler, 'sae-slider');
+		const sae_value  = this.createIn(sae_line , 'sae-value' );
 
 		let rls = [document.createElement('r-hl')],
 		    len = Math.round(width / 22), _t = -1;
 
 		for(let i = 0; i < len; i++)
 			rls.push(document.createElement('r-l'));
-		rls.push(sae_line, sae_slider);
+		sae_line .setAttribute('data-label', label);
+		sae_value.setAttribute('data-type' , type );
 
-		sae_ruler.append(...rls);
+		sae_value.textContent = min;
+		sae_value.spellcheck  = false;
+		sae_value.contentEditable = true;
+
+		sae_ruler.prepend(...rls);
+
+		sae_slider.style.left = 0;
 		sae_ruler.style.width = `${width}px`;
-		sae_ruler.addEventListener(MUIDragable.DOWN, this);
-		sae_line.append(sae_value);
+		sae_ruler.addEventListener(MUI_DOWN, this);
 		sae_value.addEventListener('input', e => {
-			/*...*/ clearTimeout(_t);
+			if (_t != -1)
+			   clearTimeout(_t);
 			_t = setTimeout(() => this.handleEvent(e), 800);
 		});
 		const setIntVal = { enumerable: true, configurable: true,
@@ -53,6 +60,13 @@ class SanaeRuler extends HTMLElement {
 				set: t => { sae_value.setAttribute('data-type', (type = t)) }
 			}
 		});
+	}
+	/** Create element inside target
+	 * @param {HTMLElement} parent 
+	 * @param {String} tag
+	 */
+	createIn(parent, tag) {
+		return parent.appendChild(document.createElement(tag));
 	}
 
 	handleEvent(e) {

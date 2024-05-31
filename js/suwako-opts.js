@@ -108,26 +108,30 @@ class SuwakoOptions extends HTMLLabelElement {
 	}) {
 		const editable = type === 2;
 		const dummybtn = type === 0;
-		const suw_opts =  super();
-		const suw_list = _setup('ul', { class: 'suw-list', style: 'position: absolute; z-index: 1;' });
+		const suw_opts = super();
+		const suw_list = this.aNode('ul', { class: 'suw-list' });
 
-		let options = [], index = -1;
+		let options = [], index = -1, items = [];
 
-		for (let attrs of list) {
-			let { 'data-value': val, 'class': cl } = attrs;
-			if ( !val ) {
-				attrs.class = 'suw-hr'+ (cl ? ' '+ cl : '');
-				suw_list.append(_setup('div', attrs))
-			} else if (!options.includes(val)) {
-				options.push(val);
-				attrs.class = 'suw-item'+ (cl ? ' '+ cl : '');
-				suw_list.append(_setup('li', attrs));
-			}
+		for (let { style:css, value:vl, class:cl, text:str } of list) {
+			let el; cl = cl ? ' '+ cl : '';
+			if (vl) {
+				if(!options.includes(vl))
+					options.push(vl);
+				el = this.aNode('li', { class: 'suw-item'+ cl, 'data-value': vl });
+			} else
+				el = this.aNode('div', { class: 'suw-hr'+ cl });
+			if (css) el.style = css;
+			if (str) el.textContent = str;
+			items.push(el);
 		}
+		suw_list.style.zIndex = 1;
+		suw_list.append(...items);
+
 		const suw_area = (
 			editable ? new SuwakoInput({ place_text, list: options, on_apply_emiter: true }) :
 			dummybtn ? document.createTextNode(marker) :
-			_setup('div', { class: 'suw-toggle', 'data-marker': marker, 'data-empty': place_text })
+			this.aNode('div', { class: 'suw-toggle', 'data-marker': marker, 'data-empty': place_text })
 		);
 		if (editable) {
 			suw_area.onApplyChange = () => {
@@ -137,7 +141,7 @@ class SuwakoOptions extends HTMLLabelElement {
 		}
 		suw_area.id = suw_opts.htmlFor = for_id;
 		suw_opts.className = `suw${dummybtn ? '-toggle':''}-opts`;
-		suw_opts.addEventListener(MUIDragable.DOWN, this);
+		suw_opts.addEventListener(MUI_DOWN, this);
 		suw_opts.append(suw_area, suw_list);
 
 		Object.defineProperties(this, {
@@ -155,6 +159,16 @@ class SuwakoOptions extends HTMLLabelElement {
 				set: s => {suw_area.textContent = s;}
 			}
 		});
+	}
+	/** Create node with attributes
+	 * @param {String} tag
+	 * @param {Object} attrs
+	 */
+	aNode(tag, attrs) {
+		const el = document.createElement(tag);
+		for (const name in attrs)
+			el.setAttribute(name, attrs[name]);
+		return el;
 	}
 
 	handleEvent(e) {

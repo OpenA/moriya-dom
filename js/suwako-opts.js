@@ -1,26 +1,40 @@
 
-class SuwakoInput extends HTMLDivElement {
+class SuwakoInput extends HTMLElement {
 
-	constructor({
+/** Custom input element with:
+ * * `variants` - list of autocompletes
+ * * `place_text` - input placeholder
+ * * `on_apply_emiter` - enables **onApplyChange** virtual method
+ * @param {Object}   opts
+ * @param {String[]} opts.variants
+ * @param {String}   opts.place_text
+ * @param {Boolean}  opts.on_apply_emiter
+ */
+	constructor(opts) {
+		SuwakoInput.define(super(), opts, this);
+	}
+/** A polyfill for custom defines
+ * @param {HTMLElement} suw_inp
+ */
+	static define(suw_inp, {
+		variants = [],
 		place_text = 'Empty',
-		on_apply_emiter = false,
-		list = []
-	}) {
-		const suw_inp = super();
-
+		on_apply_emiter = false }, handler = SuwakoInput.prototype.handleEvent)
+	{
 		suw_inp.className = 'suw-input';
 		suw_inp.contentEditable = true;
 		suw_inp.spellcheck = false;
 		suw_inp.setAttribute('autocomplete', 'off');
 		suw_inp.setAttribute('data-empty', place_text);
-		suw_inp.addEventListener('input', this);
-		suw_inp.addEventListener('keydown', this);
+		suw_inp.addEventListener('input', handler);
+		suw_inp.addEventListener('keydown', handler);
 		if (on_apply_emiter) {
-			suw_inp.addEventListener('keyup', this);
-			suw_inp.addEventListener('blur', this);
+			suw_inp.addEventListener('keyup', handler);
+			suw_inp.addEventListener('blur', handler);
 		}
-		Object.defineProperties(this, {
-			variants : { enumerable: true, value: list },
+		Object.defineProperties(suw_inp, {
+			_cmpPrev: { enumerable: false, value: '', writable: true },
+			variants : { enumerable: true, value: variants },
 			compIndex: { enumerable: true, value: -1, writable: true }
 		});
 	}
@@ -37,7 +51,8 @@ class SuwakoInput extends HTMLDivElement {
 		   ep = this.getAttribute('data-compl');
 		if (p && p.startsWith(sp) && p.endsWith(ep)) {
 			if (fill) {
-				this.textContent = sp + ep;
+				this.removeAttribute('data-compl');
+				super.textContent = sp + ep;
 			} else
 				this.setAttribute('data-compl', p.substring(sp.length));
 			return sp.length + ep.length;
@@ -69,7 +84,8 @@ class SuwakoInput extends HTMLDivElement {
 			if (e.key !== 'Enter')
 				break;
 		case 'blur':
-			this.onApplyChange();
+			if (sp !== this._cmpPrev)
+				this.onApplyChange((this._cmpPrev = sp));
 			break;
 		case 'input':
 			if (!sp || !(this.checkCompl(sp, i) || this.findCompl(sp)))
@@ -93,6 +109,17 @@ class SuwakoInput extends HTMLDivElement {
 				break;
 			}
 		}
+		e.stopPropagation();
+	}
+/** A polyfill for attach custom methods
+ * @param {HTMLElement} suw_inp
+ * @param {() => void} handler onApplyChange
+ */
+	static attach(suw_inp, handler = null) {
+		for (const method of [
+			'checkCompl','findCompl','resetCompl'
+		]) suw_inp[method] = SuwakoInput.prototype[method];
+		suw_inp.onApplyChange = handler;
 	}
 };
 
@@ -129,7 +156,7 @@ class SuwakoOptions extends HTMLLabelElement {
 		suw_list.append(...items);
 
 		const suw_area = (
-			editable ? new SuwakoInput({ place_text, list: options, on_apply_emiter: true }) :
+			editable ? new SuwakoInput({ place_text, variants: options, on_apply_emiter: true }) :
 			dummybtn ? document.createTextNode(marker) :
 			this.aNode('div', { class: 'suw-toggle', 'data-marker': marker, 'data-empty': place_text })
 		);
@@ -192,5 +219,8 @@ class SuwakoOptions extends HTMLLabelElement {
 		e.stopPropagation();
 	}
 };
-customElements.define('suw-opts', SuwakoOptions, { extends: 'label' });
-customElements.define('suw-input', SuwakoInput, { extends: 'div' });
+
+if (window.customElements) {
+	customElements.define('suw-opts', SuwakoOptions, { extends: 'label' });
+	customElements.define('suw-input', SuwakoInput);
+}

@@ -30,20 +30,21 @@ class SanaeRuler extends HTMLElement {
 		sae_value.addEventListener('input', e => {
 			if (_t != -1)
 			   clearTimeout(_t);
-			_t = setTimeout(() => this.handleEvent(e), 800);
+			_t = setTimeout(() => this._onInput(e), 800);
 		});
-		const setIntVal = { enumerable: true, configurable: true,
-			get: () => parseInt(sae_value.textContent),
-			set: i => (sae_value.textContent = Math.floor(i))
-		};
-		const setFpVal = { enumerable: true, configurable: true,
-			get: () => parseFloat(sae_value.textContent),
-			set: f => (sae_value.textContent = f.toFixed(precision))
-		};
+
+		let getIntVal = () => parseInt  (sae_value.textContent);
+		let getFpVal  = () => parseFloat(sae_value.textContent);
+		let setIntVal = i  => (sae_value.textContent = Math.floor(i));
+		let setFpVal  = f  => (sae_value.textContent = f.toFixed(precision));
+
 		Object.defineProperties(this, {
 			min: { value: min, enumerable: true, writable: true },
 			max: { value: max, enumerable: true, writable: true },
-			value: precision ? setFpVal : setIntVal,
+			value: {
+				get: precision ? getFpVal : getIntVal, enumerable: true,
+				set: precision ? setFpVal : setIntVal, configurable: true
+			},
 			precision: {
 				get: () => precision, enumerable: true,
 				set: n => {
@@ -69,12 +70,8 @@ class SanaeRuler extends HTMLElement {
 		return parent.appendChild(document.createElement(tag));
 	}
 
-	handleEvent(e) {
+	_onInput(e) {
 
-		const isVal = e.target.tagName === 'SAE-VALUE',
-		      point = isVal ? e.type === 'input' : MUIDragable.getPoint(e);
-		if ( !point )
-			return;
 		const { min, max } = this;
 		const { left, width } = this.getBoundingClientRect();
 
@@ -82,19 +79,31 @@ class SanaeRuler extends HTMLElement {
 		const marginX = slider.clientWidth,
 		      maxLeft = width - marginX;
 
-		if (isVal) {
-			let v = this.value || 0, x;
-			if (v < min) {
-				v = min, x = 0;
-			} else  if ( v > max ) {
-				v = max, x = maxLeft;
-			} else {
-				x = maxLeft * ((v - min) / (max - min));
-			}
-			this.value = v, slider.style.left = `${x}px`;
-			this.dispatchEvent(new InputEvent('change', { bubbles: true }));
-			return;
+		let v = this.value || 0, x;
+		if (v < min) {
+			v = min, x = 0;
+		} else  if ( v > max ) {
+			v = max, x = maxLeft;
+		} else {
+			x = maxLeft * ((v - min) / (max - min));
 		}
+		this.value = v, slider.style.left = `${x}px`;
+		this.dispatchEvent(new InputEvent('change', { bubbles: true }));
+	}
+
+	handleEvent(e) {
+	
+		const point = MUIDragable.getPoint(e);
+		if ( !point )
+			return;
+
+		const { min, max } = this;
+		const { left, width } = this.getBoundingClientRect();
+
+		const slider  = this.lastElementChild;
+		const marginX = slider.clientWidth,
+		      maxLeft = width - marginX;
+
 		const onAction = (pointX) => {
 			let x = pointX - left - marginX, v;
 			if (x < 0) {
